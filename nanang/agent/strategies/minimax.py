@@ -4,8 +4,7 @@ from game.move import Move
 
 class Minimax3Tree(SearchTree):
 
-  def __init__(self, root, color, expansion_depth, eval_f, 
-    eval_f2=lambda x: -eval_f(x)):
+  def __init__(self, root, color, expansion_depth, eval_f):
     
     SearchTree.__init__(root)
     self._color = color
@@ -13,8 +12,10 @@ class Minimax3Tree(SearchTree):
     self._eval = eval_f
   
   def next_best(self):
-    return sorted([edge for edge in self._root.possible_moves(self._color)],
+    best_move = sorted([edge for edge in self._root.possible_moves(self._color)],
       key = self.eval_edge)[0]
+    self.set_root(self._root.possible_board(best_move))
+    return best_move
     
   
   def eval_node(self, node):
@@ -41,7 +42,11 @@ class Minimax3Tree(SearchTree):
       move_min = None
 
       for move in moves:
-        measure = self._eval_minimax_layer(board.possible_board(move),
+        next_board = board.possible_board(move)
+
+        # we expand the board.
+        self._tree[board].append(next_board)
+        measure = self._eval_minimax_layer(next_board,
           Board.next_player(player), evals_min)
 
         if evals_min is None or evals_min > measure:
