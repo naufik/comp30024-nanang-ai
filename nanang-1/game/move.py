@@ -8,10 +8,10 @@ class Move:
 
   @staticmethod
   def from_tuple(controller, action):
-    type = action[0]
-    if(type == "MOVE" or "JUMP"):
+    move_type = action[0]
+    if(move_type == "MOVE" or "JUMP"):
       move = Move(controller, action[1][0], action[1][1])
-    elif(type == "EXIT"):
+    elif(move_type == "EXIT"):
       move = Move(controller, action[1], None)
     return move
 
@@ -29,9 +29,11 @@ class Move:
     else:
       assert(self._exitable())
 
-  def to_tuple(self):
-
-    return
+  def to_tuple(self, move_type):
+    if(move_type == "MOVE" or "JUMP"):
+      return (move_type, (self.source, self.dest))
+    elif(move_type == "EXIT"):
+      return (move_type, self.source)
 
   def _exitable(self):
     if (self.dest == None):
