@@ -31,6 +31,6 @@ class SearchTree:
     # evaluates a single move.
     pass
   
-  def eval_board(self, move):
+  def eval_board(self, board):
     # evaluates the board.
     pass
