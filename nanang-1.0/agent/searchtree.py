@@ -12,7 +12,7 @@ class SearchTree:
     self._tree = {root: []}
     self._root = root
 
-  def next(self):
+  def next_best(self):
     # returns the next best move to make (via a generator) should update the
     # search tree as well.
     return self.expand_node(self._root)[0]
