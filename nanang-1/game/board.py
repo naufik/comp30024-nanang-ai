@@ -129,13 +129,21 @@ class Board:
     new_dict = self._dict_rep.copy()
     new_winners = self._win_state.copy()
 
+    jump, delta_coor = Move.isJump(src, dst)
+
+
+
     if dst is not None:
+      if jump:
+        captured_piece = (src[0]+delta_coor[0], src[1], delta_coor[1])
+        new_dict[captured_piece] = move.controller
       new_dict[dst] = new_dict[src]
       new_dict[src] = None
     else:
       new_dict[src] = None
       
     return Board(new_dict, winner_dict=new_winners, debug=self.debug)
+
 
   def __eq__(self, other):
     """

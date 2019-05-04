@@ -57,6 +57,10 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
+
+        # selangkah_keseberang = True
+        # if selangkah_keseberang:
+        #     return move.to_tuple()
         return ("PASS", None)
 
     def update(self, colour, action):
