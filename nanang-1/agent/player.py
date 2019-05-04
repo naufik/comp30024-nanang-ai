@@ -2,6 +2,7 @@ import math
 from queue import PriorityQueue
 import heapq as heap
 from game.board import Board
+from game.move import Move
 
 class Player:
     """
@@ -56,8 +57,6 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-
-        
         return ("PASS", None)
 
     def update(self, colour, action):
@@ -78,7 +77,9 @@ class Player:
         (or pass) for the player colour (your method does not need to validate
         the action/pass against the game rules).
         """
-        # TODO: Update state representation in response to action.
+        if(action[0]!="PASS"):
+            move = Move.from_tuple(colour, action)
+            self.board.make_move(move)
 
     #pseudo-code for A*, define methods inside board
     def find_path(self):

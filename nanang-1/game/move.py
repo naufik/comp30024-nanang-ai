@@ -1,7 +1,3 @@
-"""
-
-"""
-
 _bran = range(-3, +3+1)
 
 class Move:
@@ -9,6 +5,15 @@ class Move:
   DELTAS_JUMP = [ (0, 2), (0, -2), (2, -2), (-2, 2), (2, 0), (-2, 0) ]
   
   BOARD_RANGE = [(q,r) for q in _bran for r in _bran if -q-r in _bran]
+
+  @staticmethod
+  def from_tuple(controller, action):
+    type = action[0]
+    if(type == "MOVE" or "JUMP"):
+      move = Move(controller, action[1][0], action[1][1])
+    elif(type == "EXIT"):
+      move = Move(controller, action[1], None)
+    return move
 
   @staticmethod
   def _in_board(point):
@@ -23,6 +28,10 @@ class Move:
       assert(self._jumpable() or self._adjacent())
     else:
       assert(self._exitable())
+
+  def to_tuple(self):
+
+    return
 
   def _exitable(self):
     if (self.dest == None):
