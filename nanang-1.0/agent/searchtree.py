@@ -7,30 +7,28 @@ class SearchTree:
   move that appears to be the best move after looking at the evaluation function
   on states of the search tree. 
   """
+  from game.board import Board
+  from game.move import Move
 
-  import game.board
-  import game.move
-
-  def __init__(self, root):
+  def __init__(self, root: Board):
     self._tree = {root: []}
     self._root = root
-    self._queue = []
-  # Internal representation of the tree.
 
   def next(self):
     # returns the next best move to make (via a generator) should update the
     # search tree as well.
-
-    return None 
+    return None
 
   def set_root(self, new_root):
-    # sets the root of the tree to the new root.
-    pass
+    self._tree[self._root].append(new_root)
+    self._root = new_root
+    if new_root not in self._tree:
+      self._tree[new_root] = []
 
   def eval_move(self, move):
-    # evaluates a single move.
-    pass
+    # evaluates a single move - default assumes uniform evaluation of moves.
+    return 1
   
   def eval_board(self, board):
-    # evaluates the board.
-    pass
+    # evaluates a single board - default assumes uniform evaluation of boards.
+    return 1
