@@ -56,6 +56,8 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
+
+        
         return ("PASS", None)
 
     def update(self, colour, action):
