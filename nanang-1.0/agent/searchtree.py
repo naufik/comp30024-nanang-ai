@@ -7,17 +7,20 @@ class SearchTree:
   move that appears to be the best move after looking at the evaluation function
   on states of the search tree. 
   """
-  from game.board import Board
-  from game.move import Move
 
-  def __init__(self, root: Board):
+  def __init__(self, root):
     self._tree = {root: []}
     self._root = root
 
   def next(self):
     # returns the next best move to make (via a generator) should update the
     # search tree as well.
-    return None
+    return self.expand_node(self._root)[0]
+
+  def expand_node(self, node):
+    # returns the next possible states that are traversible form one specific
+    # node.
+    return []
 
   def set_root(self, new_root):
     self._tree[self._root].append(new_root)
@@ -25,10 +28,11 @@ class SearchTree:
     if new_root not in self._tree:
       self._tree[new_root] = []
 
-  def eval_move(self, move):
-    # evaluates a single move - default assumes uniform evaluation of moves.
+  def eval_edge(self, edge):
+    # evaluates a single edge - default assumes uniform evaluation of edges.
     return 1
   
-  def eval_board(self, board):
-    # evaluates a single board - default assumes uniform evaluation of boards.
+  def eval_node(self, node):
+    # evaluates a single node - default assumes uniform evaluation of nodes.
+    # a node represents a single state
     return 1
