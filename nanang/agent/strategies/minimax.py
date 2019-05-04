@@ -50,8 +50,6 @@ class Minimax3Tree(SearchTree):
           if threshold is not None and evals_min <= threshold:
             # We know the worst possible case is going to be bad anyway
             return evals_min
-
-
       return evals_min
         
       
