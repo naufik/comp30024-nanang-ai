@@ -11,6 +11,8 @@ class ExamplePlayer:
         program will play as (Red, Green or Blue). The value will be one of the 
         strings "red", "green", or "blue" correspondingly.
         """
+
+
         # TODO: Set up state representation.
 
 
@@ -19,8 +21,8 @@ class ExamplePlayer:
         This method is called at the beginning of each of your turns to request 
         a choice of action from your program.
 
-        Based on the current state of the game, your player should select and 
-        return an allowed action to play on this turn. If there are no allowed 
+        Based on the current state of the game, your player should select and
+        return an allowed action to play on this turn. If there are no allowed
         actions, your player must return a pass instead. The action (or pass) 
         must be represented based on the above instructions for representing 
         actions.

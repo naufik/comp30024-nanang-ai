@@ -23,33 +23,23 @@ class Board:
     return board_dict
 
   @staticmethod
-  def from_json(ref_dict, single=True):
-    # create a new board from a json representation
+  def initialize_board(self):
+    red = [[-3, 0], [-3, 1], [-3, 2], [-3, 3]]
+    blue = [[3, 0], [2, 1], [1, 2], [0, 3]]
+    green = [[0, -3], [1, -3], [2, -3], [3, -3]]
 
-    if single:
-      # runs the single player implementation of the game!
-      board_dict = Board.empty_board_dict()
-      colour = ref_dict["colour"][0].upper()
-
-      for spot in ref_dict["pieces"]:
-        key = (spot[0], spot[1])
-        if (key in board_dict):
-          board_dict[key] = colour
-        else:
-          raise IndexError
-      
-      for spot in ref_dict["blocks"]:
-        key = (spot[0], spot[1])
-        if (key in board_dict):
-          board_dict[key] = "X"
+    # initialize empty board
+    pieces_coors = {"R": red, "B": blue, "G": green}
+    board_dict = Board.empty_board_dict()
+    for key, coors in pieces_coors.items():
+      for coor in coors:
+        point = (coor[0], coor[1])
+        if (point in board_dict):
+          board_dict[point] = key
         else:
           raise IndexError
 
-      return board_dict
-    else:
-      # Note that we have not yet implemented the multiplayer version of the
-      # game.
-      raise NotImplementedError
+    return board_dict
 
   def __init__(self, board_dict, winner_dict=None, debug=False):
     # The dictionary representation of the board.
