@@ -1,6 +1,7 @@
 from agent.searchtree import SearchTree
 from game.board import Board
 from game.move import Move
+from math import inf
 
 class Minimax3Tree(SearchTree):
 
@@ -12,22 +13,36 @@ class Minimax3Tree(SearchTree):
     self._eval = eval_f
   
   def next_best(self):
-    best_move = sorted([edge for edge in self._root.possible_moves(self._color)],
-      key = self.eval_edge)[0]
-    self.set_root(self._root.possible_board(best_move))
+    best_eval = -inf
+    best_move = None
+    
+    for edge in self._root.possible_moves(self._color):
+      self._mmthresh = best_eval
+      edge_eval = self.eval_edge(edge)
+      if edge_eval > best_eval:
+        best_move = edge
+        best_eval = edge_eval
+
+    self._mmthresh = -inf
+    if best_move is None:
+      best_move = ("PASS", None)
+    else:  
+      self.set_root(self._root.possible_board(best_move))
+      
     return best_move
     
   
   def eval_node(self, node):
-    return self._eval(node)
+    return self._eval(self._color, node)
   
   def eval_edge(self, edge):
     board_next = self._root.possible_board(edge)
     next_player = Move.next(self._color)
+    thresh = self._mmthresh if self._mmthresh > -inf else None
 
     # evaluate a single "layer" of minimax search (a single layer here is
     # equivalent to three layers since we have three players!)
-    return self._eval_minimax_layer(board_next, next_player)
+    return self._eval_minimax_layer(board_next, next_player, thresh)
 
   def _eval_minimax_layer(self, board, player, threshold=None):
     # try to re implement iteratively instead of recursively to save time.
@@ -39,7 +54,6 @@ class Minimax3Tree(SearchTree):
     else:
       moves = board.possible_moves(player)
       evals_min = None
-      move_min = None
 
       for move in moves:
         next_board = board.possible_board(move)
@@ -51,7 +65,6 @@ class Minimax3Tree(SearchTree):
 
         if evals_min is None or evals_min > measure:
           evals_min = measure
-          move_min = move
           if threshold is not None and evals_min <= threshold:
             # We know the worst possible case is going to be bad anyway
             return evals_min
