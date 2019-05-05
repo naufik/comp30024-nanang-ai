@@ -46,10 +46,8 @@ class Minimax3Tree(SearchTree):
   
   def eval_edge(self, edge):
     board_next = self._root.possible_board(edge)
-<<<<<<< HEAD
-=======
+
     #gives the next player whose turn it is to play, given the current player's turn
->>>>>>> 5684580bb6063736688b9c9df5a11f95ae7f860a
     next_player = Board.next_player(self._color)
     thresh = self._mmthresh if self._mmthresh > -inf else None
 
