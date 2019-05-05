@@ -82,6 +82,10 @@ class Board:
         moves.append(Move(controller, pos, None))
       except AssertionError:
         pass
+
+    if moves == []:
+      # add the pass move if there are no possible moves.
+      moves.append(Move(controller, None, None))
     
     return list(filter(lambda move: self.valid_move(move), moves))
 
@@ -110,6 +114,8 @@ class Board:
       return (self._dict_rep[move.source] == move.controller and
         self._dict_rep[move.dest] is None and
         self._dict_rep[mid] is not None)
+    elif move._passing_action():
+      return self.possible_moves(move.controller)[0]._passing_action()
     
   def make_move(self, move):
     """
@@ -145,7 +151,7 @@ class Board:
         new_dict[mid] = new_dict[src]
       new_dict[dst] = new_dict[src]
       new_dict[src] = None
-    else:
+    elif src is not None:
       new_winners[new_dict[src]] += 1
       new_dict[src] = None
       

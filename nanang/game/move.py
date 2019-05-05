@@ -32,10 +32,12 @@ class Move:
       assert(self._exitable())
 
   def to_tuple(self):
-    if not self._exitable():
+    if self._jumpable() or self._adjacent():
       return ("JUMP" if self._jumpable() else "MOVE", (self.source, self.dest))
-    else:
+    else if self._exitable():
       return ("EXIT", self.source)
+    else if self._passing_action():
+      return ("PASS", None)
 
   def _passing_action(self):
     return self.source is None and self.dest is None 
