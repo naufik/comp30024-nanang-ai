@@ -40,11 +40,11 @@ class Move:
     else:
       assert(self._exitable())
 
-  def to_tuple(self, move_type):
-    if(move_type == "MOVE" or "JUMP"):
-      return (move_type, (self.source, self.dest))
-    elif(move_type == "EXIT"):
-      return (move_type, self.source)
+  def to_tuple(self):
+    if not self._exitable():
+      return ("JUMP" if self._jumpable() else "MOVE", (self.source, self.dest))
+    else:
+      return ("EXIT", self.source)
 
   def _exitable(self):
     if (self.dest == None):
