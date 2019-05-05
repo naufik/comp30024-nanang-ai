@@ -23,22 +23,23 @@ class Player:
     # def __init__(self, board, color, single=True):
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
-        self.colour = colour[0].upper()
-        self.board = Board(Board.initialize_board())
-        self.n_pieces = len(self.board.pieces_of(colour))
+        self._colour = colour[0].upper()
+        self._board = Board(Board.initialize_board())
+        self._n_pieces = len(self._board.pieces_of(colour))
+
         # Do extra initialization steps if it is a single_player game/
-        self._goals = Player.GOALS[self.colour]
+        self._goals = Player.GOALS[self._colour]
 
         # using a simple Minimax3Tree, replace None with the heuristic function.
-        self._search_tree = Minimax3Tree(self.board, self.colour, 1, None)
+        self._search_tree = Minimax3Tree(self._board, self._colour, 1, None)
 
 
     @staticmethod
     def board_evaluation(color, board: Board):
         ef = 0.0
-        ef += w1 * len(board.pieces_of(color))
-        ef += w1 * board._win_state[color]
-        ef -= w2 * len(board.pieces_of(Board.next_player(color)) + 
+        ef += 10 * len(board.pieces_of(color))
+        ef += 10 * board._win_state[color]
+        ef -= 5 * len(board.pieces_of(Board.next_player(color)) + 
             board.pieces_of(Board.next_player(Board.next_player(color))))
         
 
@@ -84,11 +85,11 @@ class Player:
         """
         if (action[0] != "PASS"):
             move = Move.from_tuple(colour, action)
-            self.board = self.board.possible_board(move)
-            self._search_tree.set_root(self.board)
+            self._board = self._board.possible_board(move)
+            self._search_tree.set_root(self._board)
   
     def is_goal(self, current):
         """
         Checks if the state passed in current is a goal state.
         """
-        return (len(current.pieces_of(self.colour)) == 0)
+        return (len(current.pieces_of(self._colour)) == 0)
