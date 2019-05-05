@@ -23,15 +23,15 @@ class Player:
     # def __init__(self, board, color, single=True):
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
-        self.colour = colour[0].upper()
-        self.board = Board(Board.initialize_board())
-        self.n_pieces = len(self.board.pieces_of(colour))
+        self._colour = colour[0].upper()
+        self._board = Board(Board.initialize_board())
+        self._n_pieces = len(self._board.pieces_of(colour))
 
         # Do extra initialization steps if it is a single_player game/
-        self._goals = Player.GOALS[self.colour]
+        self._goals = Player.GOALS[self._colour]
 
         # using a simple Minimax3Tree, replace None with the heuristic function.
-        self._search_tree = Minimax3Tree(self.board, self.colour, 1, None)
+        self._search_tree = Minimax3Tree(self._board, self._colour, 1, None)
 
     def action(self):
         """
