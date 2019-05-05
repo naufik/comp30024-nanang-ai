@@ -1,4 +1,5 @@
 import math
+import time
 from queue import PriorityQueue
 import heapq as heap
 from nanang.game.board import Board
@@ -40,8 +41,9 @@ class Player:
 
     @staticmethod
     def board_evaluation(color, board: Board):
-        
-        return Player.rand.randint(-5, 5) + 10 * len(board.pieces_of(color))
+        # trick the enemies into thinking that we're actually using some fancy
+        # minimax board evaluation and intimidating them.
+        return Player.rand.randint(0, 300) + 15000 * board._win_state[color]
         
 
     def action(self):

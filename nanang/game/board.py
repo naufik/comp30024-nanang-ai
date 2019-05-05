@@ -146,6 +146,7 @@ class Board:
       new_dict[dst] = new_dict[src]
       new_dict[src] = None
     else:
+      new_winners[new_dict[src]] += 1
       new_dict[src] = None
       
     return Board(new_dict, winner_dict=new_winners, 
