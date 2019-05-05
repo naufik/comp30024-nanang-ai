@@ -3,18 +3,8 @@ _bran = range(-3, +3+1)
 class Move:
   DELTAS_MOVE = [ (0, 1), (0, -1), (1, -1), (-1, 1), (-1, 0), (1,0) ]
   DELTAS_JUMP = [ (0, 2), (0, -2), (2, -2), (-2, 2), (2, 0), (-2, 0) ]
-  DELTAS_JUMP_BETWEEN = [(0, 1), (0, -1), (1, -1), (-1, 1), (1, 0), (-1, 0)]
 
   BOARD_RANGE = [(q,r) for q in _bran for r in _bran if -q-r in _bran]
-
-  @staticmethod
-  def isJump(source, dest):
-    if (dest is None):
-      return False, None
-    delta = (dest[0] - source[0], dest[1] - source[1])
-    if (delta in Move.DELTAS_JUMP):
-      return True, Move.DELTAS_JUMP_BETWEEN[Move.DELTAS_JUMP.index(delta)]
-    return False, None
 
   @staticmethod
   def from_tuple(controller, action):
@@ -35,10 +25,10 @@ class Move:
     self.controller = controller
     self.dest = dest
 
-    if dest != None:
+    if dest is not None:
       assert(Move._in_board(source) and Move._in_board(dest))
       assert(self._jumpable() or self._adjacent())
-    else:
+    elif source is not None:
       assert(self._exitable())
 
   def to_tuple(self):
@@ -46,6 +36,9 @@ class Move:
       return ("JUMP" if self._jumpable() else "MOVE", (self.source, self.dest))
     else:
       return ("EXIT", self.source)
+
+  def _passing_action(self):
+    return self.source is None and self.dest is None 
 
   def _exitable(self):
     if (self.dest == None):

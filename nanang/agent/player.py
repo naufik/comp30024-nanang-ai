@@ -36,42 +36,11 @@ class Player:
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
             lambda c, x: self.board_evaluation(c, x))
 
+    rnd = Random()
     def board_evaluation(self, colour, board: Board):
         #calculate distance for enemy players to their goal
-        player_dist = 0
-        enemy_dist = 0
-        player_pieces = len(board.pieces_of(self._colour))
-        enemy_pieces = 0
-        for player, goals in Player.GOALS.items():
-            pieces = board.pieces_of(player)
-            for piece_coor in pieces:
-                if player== self._colour:
-                    player_dist += Player.dist_nearest_goal(piece_coor, goals)
-                else:
-                    enemy_dist += Player.dist_nearest_goal(piece_coor, goals)
-            if player != self._colour:
-                enemy_pieces += len(board.pieces_of(player))
 
-        ngasal = 0.5
-        lebih_ngasal = 1.1
-        return lebih_ngasal*player_dist - ngasal*enemy_dist + lebih_ngasal*player_pieces - ngasal*enemy_pieces
-
-    @staticmethod
-    def dist_nearest_goal(piece, goals):
-        minimum = 0
-        flag = True
-        for goal in goals:
-            dist = Player._dist(piece, goal)
-            if flag:
-                minimum = dist
-                flag = False
-            elif dist < minimum:
-                minimum = dist
-        return minimum
-
-    @staticmethod
-    def _dist(x, y):
-        return max(x[0] - y[0], x[1] - y[1], (-x[0] - x[1]) - (-y[0] - y[1]))
+        return Player.rnd.randint(-30, 30) + 1000 * board._win_state[colour]
 
     def action(self):
         """
