@@ -6,7 +6,16 @@ from math import inf
 class Minimax3Tree(SearchTree):
 
   def __init__(self, root, color, expansion_depth, eval_f):
-    
+    """
+    Initializes a minimax search tree.
+    :param root: the root of the tree.
+    :param color: the color of the player in using this tree.
+    :param expansion_depth: the depth of the expansion of the tree on a single
+    search.
+    :param eval_f: the evaluation function used to evaluate a single board,
+    needs to be in callable with two arguments - where the first argument is the
+    color and the second argument is the board.
+    """
     SearchTree.__init__(root)
     self._color = color
     self._xdepth = expansion_depth
