@@ -33,6 +33,16 @@ class Player:
         # using a simple Minimax3Tree, replace None with the heuristic function.
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, None)
 
+
+    @staticmethod
+    def board_evaluation(color, board: Board):
+        ef = 0.0
+        ef += 10 * len(board.pieces_of(color))
+        ef += 10 * board._win_state[color]
+        ef -= 5 * len(board.pieces_of(Board.next_player(color)) + 
+            board.pieces_of(Board.next_player(Board.next_player(color))))
+        
+
     def action(self):
         """
         This method is called at the beginning of each of your turns to request
@@ -75,11 +85,11 @@ class Player:
         """
         if (action[0] != "PASS"):
             move = Move.from_tuple(colour, action)
-            self.board = self.board.possible_board(move)
-            self._search_tree.set_root(self.board)
+            self._board = self._board.possible_board(move)
+            self._search_tree.set_root(self._board)
   
     def is_goal(self, current):
         """
         Checks if the state passed in current is a goal state.
         """
-        return (len(current.pieces_of(self.colour)) == 0)
+        return (len(current.pieces_of(self._colour)) == 0)
