@@ -142,7 +142,7 @@ class Board:
     if dst is not None:
       if move._jumpable():
         mid = tuple([(a+b)//2 for a,b in zip(move.dest, move.source)])
-        new_dict[mid] = move.controller
+        new_dict[mid] = new_dict[src]
       new_dict[dst] = new_dict[src]
       new_dict[src] = None
     else:
