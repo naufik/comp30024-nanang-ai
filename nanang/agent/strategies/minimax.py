@@ -46,7 +46,8 @@ class Minimax3Tree(SearchTree):
   
   def eval_edge(self, edge):
     board_next = self._root.possible_board(edge)
-    next_player = Move.next(self._color)
+    #gives the next player whose turn it is to play, given the current player's turn
+    next_player = Board.next_player(self._color)
     thresh = self._mmthresh if self._mmthresh > -inf else None
 
     # evaluate a single "layer" of minimax search (a single layer here is
@@ -64,6 +65,7 @@ class Minimax3Tree(SearchTree):
       moves = board.possible_moves(player)
       evals_min = None
 
+      #for all possible moves by enemy
       for move in moves:
         next_board = board.possible_board(move)
 
