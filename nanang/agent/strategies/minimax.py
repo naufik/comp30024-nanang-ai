@@ -1,6 +1,6 @@
-from agent.searchtree import SearchTree
-from game.board import Board
-from game.move import Move
+from nanang.agent.searchtree import SearchTree
+from nanang.game.board import Board
+from nanang.game.move import Move
 from math import inf
 
 class Minimax3Tree(SearchTree):
@@ -16,7 +16,7 @@ class Minimax3Tree(SearchTree):
     needs to be in callable with two arguments - where the first argument is the
     color and the second argument is the board.
     """
-    SearchTree.__init__(root)
+    SearchTree.__init__(self, root)
     self._color = color
     self._xdepth = expansion_depth
     self._eval = eval_f
@@ -46,7 +46,7 @@ class Minimax3Tree(SearchTree):
   
   def eval_edge(self, edge):
     board_next = self._root.possible_board(edge)
-    next_player = Move.next(self._color)
+    next_player = Board.next_player(self._color)
     thresh = self._mmthresh if self._mmthresh > -inf else None
 
     # evaluate a single "layer" of minimax search (a single layer here is
@@ -68,7 +68,7 @@ class Minimax3Tree(SearchTree):
         next_board = board.possible_board(move)
 
         # we expand the board.
-        self._tree[board].append(next_board)
+        # self._tree[board].append(next_board)
         measure = self._eval_minimax_layer(next_board,
           Board.next_player(player), evals_min)
 

@@ -8,7 +8,7 @@ A piece has a 'controller' and a 'position', the 'controller' is the team that
 controls a piece, which is a selection of 'R', 'G', 'B', 'X'. ('X' refers to the
 blocking pieces.)
 """
-from game.move import Move
+from nanang.game.move import Move
 
 class Board:
   _turn_dict = {"R": "G", "G": "B", "B": "R"}
@@ -29,7 +29,7 @@ class Board:
     return board_dict
 
   @staticmethod
-  def initialize_board(self):
+  def initialize_board():
     red = [[-3, 0], [-3, 1], [-3, 2], [-3, 3]]
     blue = [[3, 0], [2, 1], [1, 2], [0, 3]]
     green = [[0, -3], [1, -3], [2, -3], [3, -3]]

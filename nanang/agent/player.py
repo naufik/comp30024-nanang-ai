@@ -1,11 +1,12 @@
 import math
 from queue import PriorityQueue
 import heapq as heap
-from game.board import Board
-from game.move import Move
+from nanang.game.board import Board
+from nanang.game.move import Move
 
-from agent.strategies.minimax import Minimax3Tree
-from agent.searchtree import SearchTree
+from nanang.agent.strategies.minimax import Minimax3Tree
+from nanang.agent.searchtree import SearchTree
+from random import Random
 
 class Player:
     """
@@ -25,22 +26,22 @@ class Player:
         assert(colour in {"red", "green", "blue"})
         self._colour = colour[0].upper()
         self._board = Board(Board.initialize_board())
-        self._n_pieces = len(self._board.pieces_of(colour))
+        self._n_pieces = len(self._board.pieces_of(self._colour))
 
         # Do extra initialization steps if it is a single_player game/
         self._goals = Player.GOALS[self._colour]
 
         # using a simple Minimax3Tree, replace None with the heuristic function.
-        self._search_tree = Minimax3Tree(self._board, self._colour, 1, None)
+        self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
+            lambda c, x: Player.board_evaluation(c, x))
 
+
+    rand = Random()
 
     @staticmethod
     def board_evaluation(color, board: Board):
-        ef = 0.0
-        ef += 10 * len(board.pieces_of(color))
-        ef += 10 * board._win_state[color]
-        ef -= 5 * len(board.pieces_of(Board.next_player(color)) + 
-            board.pieces_of(Board.next_player(Board.next_player(color))))
+        
+        return Player.rand.randint(-5, 5)
         
 
     def action(self):

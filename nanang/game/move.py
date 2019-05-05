@@ -18,6 +18,7 @@ class Move:
 
   @staticmethod
   def from_tuple(controller, action):
+    controller = controller[0].upper()
     move_type = action[0]
     if(move_type == "MOVE" or "JUMP"):
       move = Move(controller, action[1][0], action[1][1])
