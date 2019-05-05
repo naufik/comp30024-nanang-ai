@@ -26,12 +26,21 @@ class Player:
         self.colour = colour[0].upper()
         self.board = Board(Board.initialize_board())
         self.n_pieces = len(self.board.pieces_of(colour))
-
         # Do extra initialization steps if it is a single_player game/
         self._goals = Player.GOALS[self.colour]
 
         # using a simple Minimax3Tree, replace None with the heuristic function.
         self._search_tree = Minimax3Tree(self.board, self.colour, 1, None)
+
+
+    @staticmethod
+    def board_evaluation(color, board: Board):
+        ef = 0.0
+        ef += w1 * len(board.pieces_of(color))
+        ef += w1 * board._win_state[color]
+        ef -= w2 * len(board.pieces_of(Board.next_player(color)) + 
+            board.pieces_of(Board.next_player(Board.next_player(color))))
+        
 
     def action(self):
         """
