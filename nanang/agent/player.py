@@ -59,7 +59,7 @@ class Player:
         # selangkah_keseberang = True
         # if selangkah_keseberang:
         #     return move.to_tuple()
-        move: Move = self._search_tree.next_best().to_tuple()
+        move: Move = self._search_tree.next_best()
         if move:
             return move.to_tuple()
         else:
