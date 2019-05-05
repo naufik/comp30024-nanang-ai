@@ -41,7 +41,7 @@ class Player:
     @staticmethod
     def board_evaluation(color, board: Board):
         
-        return Player.rand.randint(-5, 5)
+        return Player.rand.randint(-5, 5) + 10 * len(board.pieces_of(color))
         
 
     def action(self):
