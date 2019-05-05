@@ -12,7 +12,7 @@ class Move:
     if (dest is None):
       return False, None
     delta = (dest[0] - source[0], dest[1] - source[1])
-    if(delta in Move.DELTAS_JUMP):
+    if (delta in Move.DELTAS_JUMP):
       return True, Move.DELTAS_JUMP_BETWEEN[Move.DELTAS_JUMP.index(delta)]
     return False, None
 

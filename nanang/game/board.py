@@ -11,6 +11,12 @@ blocking pieces.)
 from game.move import Move
 
 class Board:
+  _turn_dict = {"R": "G", "G": "B", "B": "R"}
+
+  @staticmethod
+  def next_player(color):
+    return Board._turn_dict[color]
+
   @staticmethod
   def empty_board_dict():
     # creates an empty board dictionary.
@@ -41,13 +47,14 @@ class Board:
 
     return board_dict
 
-  def __init__(self, board_dict, winner_dict=None, debug=False):
+  def __init__(self, board_dict, winner_dict=None, current="R", debug=False):
     # The dictionary representation of the board.
     self._dict_rep = board_dict
     if winner_dict is None:
       winner_dict = {"R": 0, "G": 0, "B": 0}
     self._win_state = winner_dict
     self.debug = debug
+    self.current_turn = current
 
   @staticmethod
   def piece_goal(self, key, pos):
@@ -86,10 +93,13 @@ class Board:
         pieces.append(key)
     return pieces
 
-  def valid_move(self, move):
+  def valid_move(self, move: Move):
     """
     Checks if a move is valid
     """
+    if move.controller != self.current_turn:
+      return False
+
     if move._exitable():
       return self._dict_rep[move.source] == move.controller
     elif move._adjacent():
@@ -114,7 +124,7 @@ class Board:
       return True
     return False
   
-  def possible_board(self, move):
+  def possible_board(self, move: Move):
     """
       Returns a board state after as if we performed this move, this method is
       best used only for searching.
@@ -129,20 +139,17 @@ class Board:
     new_dict = self._dict_rep.copy()
     new_winners = self._win_state.copy()
 
-    jump, delta_coor = Move.isJump(src, dst)
-
-
-
     if dst is not None:
-      if jump:
-        captured_piece = (src[0]+delta_coor[0], src[1], delta_coor[1])
-        new_dict[captured_piece] = move.controller
+      if move._jumpable():
+        mid = tuple([(a+b)//2 for a,b in zip(move.dest, move.source)])
+        new_dict[mid] = move.controller
       new_dict[dst] = new_dict[src]
       new_dict[src] = None
     else:
       new_dict[src] = None
       
-    return Board(new_dict, winner_dict=new_winners, debug=self.debug)
+    return Board(new_dict, winner_dict=new_winners, 
+      current=Board.next_player(self.current_turn), debug=self.debug)
 
 
   def __eq__(self, other):
