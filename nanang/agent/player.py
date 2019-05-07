@@ -37,15 +37,23 @@ class Player:
             lambda c, x: self.board_evaluation(c, x))
 
     def board_evaluation(self, colour, board: Board):
-        #calculate distance for enemy players to their goal
-        player_dist = 0
+        """
+
+        :param colour:
+        :param board:
+        :return:
+        """
+
         enemy_dist = 0
         player_pieces = len(board.pieces_of(self._colour))
+
+        # calculate distance for enemy players to their goal
+        player_dist = 0
         enemy_pieces = 0
         for player, goals in Player.GOALS.items():
             pieces = board.pieces_of(player)
             for piece_coor in pieces:
-                if player== self._colour:
+                if player == self._colour:
                     player_dist += Player.dist_nearest_goal(piece_coor, goals)
                 else:
                     enemy_dist += Player.dist_nearest_goal(piece_coor, goals)
@@ -54,7 +62,7 @@ class Player:
 
         ngasal = 0.5
         lebih_ngasal = 1.1
-        return lebih_ngasal*player_dist - ngasal*enemy_dist + lebih_ngasal*player_pieces - ngasal*enemy_pieces
+        return -lebih_ngasal*player_dist + ngasal*enemy_dist + lebih_ngasal*player_pieces - ngasal*enemy_pieces
 
     @staticmethod
     def dist_nearest_goal(piece, goals):

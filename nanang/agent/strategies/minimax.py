@@ -20,7 +20,7 @@ class Minimax3Tree(SearchTree):
     self._color = color
     self._xdepth = expansion_depth
     self._eval = eval_f
-  
+
   def next_best(self):
     best_eval = -inf
     best_move = None
