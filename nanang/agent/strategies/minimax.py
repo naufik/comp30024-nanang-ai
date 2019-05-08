@@ -61,7 +61,8 @@ class Minimax3Tree(SearchTree):
 
     if (player == self._color):
       moves = board.possible_moves(player)
-      return max([self.eval_node(board.possible_board(move)) for move in moves] + [0])
+      return max([self.eval_node(board.possible_board(move)) for move in moves] + 
+        [inf if board._win_state[player] >= 4 else -inf])
     else:
       moves = board.possible_moves(player)
       evals_min = None
