@@ -34,7 +34,7 @@ class Minimax3Tree(SearchTree):
 
     self._mmthresh = -inf
     if best_move is None:
-      best_move = ("PASS", None)
+      best_move = Move(self._color, None, None)
     else:  
       self.set_root(self._root.possible_board(best_move))
       

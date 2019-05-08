@@ -35,7 +35,7 @@ class Player:
 
         # using a simple Minimax3Tree, replace None with the heuristic function.
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
-            evals.eval_one)
+            evals.best_eval_ever)
 
     rnd = Random()
     def board_evaluation(self, colour, board: Board):
@@ -108,10 +108,9 @@ class Player:
         (or pass) for the player colour (your method does not need to validate
         the action/pass against the game rules).
         """
-        if (action[0] != "PASS"):
-            move = Move.from_tuple(colour, action)
-            self._board = self._board.possible_board(move)
-            self._search_tree.set_root(self._board)
+        move = Move.from_tuple(colour, action)
+        self._board = self._board.possible_board(move)
+        self._search_tree.set_root(self._board)
   
     def is_goal(self, current):
         """

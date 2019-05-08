@@ -10,10 +10,12 @@ class Move:
   def from_tuple(controller, action):
     controller = controller[0].upper()
     move_type = action[0]
-    if(move_type in {"MOVE", "JUMP"}):
+    if (move_type in {"MOVE", "JUMP"}):
       move = Move(controller, action[1][0], action[1][1])
-    elif(move_type == "EXIT"):
+    elif (move_type == "EXIT"):
       move = Move(controller, action[1], None)
+    elif move_type == "PASS":
+      move = Move(controller, None, None)
     return move
 
   @staticmethod
