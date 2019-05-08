@@ -39,8 +39,33 @@ class Player:
 
     rnd = Random()
     def board_evaluation(self, colour, board: Board):
+        """
+
+        :param colour:
+        :param board:
+        :return:
+        """
+
+        enemy_dist = 0
+        player_pieces = len(board.pieces_of(self._colour))
+
+        # calculate distance for enemy players to their goal
+        player_dist = 0
+        enemy_pieces = 0
+        for player, goals in Player.GOALS.items():
+            pieces = board.pieces_of(player)
+            for piece_coor in pieces:
+                if player == self._colour:
+                    player_dist += Player.dist_nearest_goal(piece_coor, goals)
+                else:
+                    enemy_dist += Player.dist_nearest_goal(piece_coor, goals)
+            if player != self._colour:
+                enemy_pieces += len(board.pieces_of(player))
         #calculate distance for enemy players to their goal
 
+        ngasal = 0.5
+        lebih_ngasal = 1.1
+        return -lebih_ngasal*player_dist + ngasal*enemy_dist + lebih_ngasal*player_pieces - ngasal*enemy_pieces
         return Player.rnd.random() + 1000 * board._win_state[colour]
 
     def action(self):
