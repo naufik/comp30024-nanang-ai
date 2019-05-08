@@ -35,7 +35,7 @@ class Player:
 
         # using a simple Minimax3Tree, replace None with the heuristic function.
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
-            evals.best_eval_ever)
+            evals.eval_one)
 
     rnd = Random()
     def board_evaluation(self, colour, board: Board):

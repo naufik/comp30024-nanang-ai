@@ -17,10 +17,7 @@ def _dist(x, y):
 
 def mn_dist(color, board: Board):
   pieces = board.pieces_of(color)
-  tot = 0.0
-  for piece in pieces:
-    tot += min([_dist(piece, goal) for goal in GOALS[color]])
-  return tot
+  return sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])
 
 w = [500, 2000, 200]
 
