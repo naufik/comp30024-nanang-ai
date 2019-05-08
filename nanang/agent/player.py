@@ -4,9 +4,10 @@ from queue import PriorityQueue
 import heapq as heap
 from nanang.game.board import Board
 from nanang.game.move import Move
-
 from nanang.agent.strategies.minimax import Minimax3Tree
 from nanang.agent.searchtree import SearchTree
+import nanang.agent.strategies.evals as evals
+
 from random import Random
 
 class Player:
@@ -34,13 +35,13 @@ class Player:
 
         # using a simple Minimax3Tree, replace None with the heuristic function.
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
-            lambda c, x: self.board_evaluation(c, x))
+            evals.eval_one)
 
     rnd = Random()
     def board_evaluation(self, colour, board: Board):
         #calculate distance for enemy players to their goal
 
-        return Player.rnd.randint(-30, 30) + 1000 * board._win_state[colour]
+        return Player.rnd.random() + 1000 * board._win_state[colour]
 
     def action(self):
         """

@@ -104,7 +104,9 @@ class Board:
     if move.controller != self.current_turn:
       return False
 
-    if move._exitable():
+    if move._passing_action():
+      return True
+    elif move._exitable():
       return self._dict_rep[move.source] == move.controller
     elif move._adjacent():
       return (self._dict_rep[move.source] == move.controller \
@@ -114,8 +116,6 @@ class Board:
       return (self._dict_rep[move.source] == move.controller and
         self._dict_rep[move.dest] is None and
         self._dict_rep[mid] is not None)
-    elif move._passing_action():
-      return self.possible_moves(move.controller)[0]._passing_action()
     
   def make_move(self, move):
     """
