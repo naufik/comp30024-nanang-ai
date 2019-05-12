@@ -19,7 +19,6 @@ class MonteCarloNode:
     self.nscore = 0
   
   def explore(self, color):
-    # TODO: continue this, should insert a random child to the tree.
     possible_moves = self.board.possible_moves(color)
     index = MonteCarloSearchTree.rng.randint(0, len(possible_moves) - 1)
 
@@ -32,7 +31,7 @@ class MonteCarloNode:
   
   def propagate_up(self, positive):
     self.nscore += 1
-    self.qscore = int(positive)
+    self.qscore += int(positive)
     if self.parent is not None:
       self.parent.backtrack(positive)
 
@@ -40,13 +39,13 @@ class MonteCarloNode:
     if self.nscore == 0:
       return 0
     return (self.qscore / self.nscore) + \
-      MonteCarloNode.exp_factor * sqrt(log(self.qscore) / self.nscore)
+      MonteCarloNode.exp_factor * sqrt(log(self.parent.nscore) / self.nscore)
   
   def __eq__(self, other):
     return self.board == other.board
   
   def __hash__(self):
-    return self.board.__hash__()
+    return hash(self.board)
 
 class MonteCarloSearchTree(SearchTree):
   rng = SystemRandom()
@@ -66,6 +65,7 @@ class MonteCarloSearchTree(SearchTree):
     self._maxdepth = max_depth
     self.backup_eval = backup_eval
     self.set_root(root)
+    self._master_turn_count = 0
 
     self.tree_set = set()
 
@@ -80,13 +80,14 @@ class MonteCarloSearchTree(SearchTree):
       new_node = MonteCarloNode(self._mct_root, new_root)
       self.tree_set.add(new_node)
     
+    self._master_turn_count += 1
+    
 
   def find_in_set(self, board):
     for node in self.tree_set:
       if node.board == board:
         return node
     return None
-
 
   def next_best(self):
     pass
@@ -97,13 +98,42 @@ class MonteCarloSearchTree(SearchTree):
   def eval_edge(self, node):
     pass
 
-  def monte_carlo_select(self, node):
-    pass
+  def monte_carlo_select(self, node: MonteCarloNode):
+    return_node = node
+
+    if node.successors != []:
+      max_node = self.monte_carlo_select(max(node.successors, 
+        key=MonteCarloNode.node_eval))
+      if max_node.node_eval() < MonteCarloNode.exp_factor:
+        return max_node.parent.explore()
+      else:
+        return max_node
+
+    return return_node.explore()
   
   def monte_carlo_simulate(self, node):
-    pass
+    board: Board = node.board
+    turn_counter = self._master_turn_count
+    player_begin = board.current_turn
 
-  def monte_carlo_update(self, node, score):
-    pass
+    while board.get_winner() is None:
+      if turn_counter >= 256:
+        break
+
+      moves = board.possible_moves(board.current_turn)
+      index = MonteCarloSearchTree.rng.randint(0, len(moves) - 1)
+      board.make_move(moves[index])
+      
+      if board.current_turn == player_begin:
+        turn_counter += 1  
+      
+    if board.get_winner() == self.color:
+      return True
+    elif board.get_winner() is None:
+      # draw mechanism, right now do a coin flip.
+      return MonteCarloSearchTree.rng.random() <= 0.3
+    else:
+      return False
+    
 
   
