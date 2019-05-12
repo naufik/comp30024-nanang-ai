@@ -46,7 +46,7 @@ class MonteCarloNode:
       self.parent.backtrack(winner)
 
   def node_eval(self):
-    if self.nscore == 0:
+    if (self.nscore == 0) or (self.parent is None):
       return 0
     return (self.qscore / self.nscore) + \
       MonteCarloNode.exp_factor * sqrt(log(self.parent.nscore) / self.nscore)
@@ -125,10 +125,8 @@ class MonteCarloSearchTree(SearchTree):
     if node.successors != []:
       max_node = self.monte_carlo_select(max(node.successors, 
         key=MonteCarloNode.node_eval))
-      if max_node.node_eval() < MonteCarloNode.exp_factor:
-        return max_node.parent.explore()
-      else:
-        return max_node
+      
+      return max_node
 
     return return_node.explore()
   
