@@ -5,6 +5,7 @@ import heapq as heap
 from nanang.game.board import Board
 from nanang.game.move import Move
 from nanang.agent.strategies.minimax import Minimax3Tree
+from nanang.agent.strategies.mcstree import MonteCarloSearchTree, MonteCarloNode
 from nanang.agent.searchtree import SearchTree
 import nanang.agent.strategies.evals as evals
 
@@ -34,8 +35,10 @@ class Player:
         self._goals = Player.GOALS[self._colour]
 
         # using a simple Minimax3Tree, replace None with the heuristic function.
-        self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
-            evals.eval_one)
+        # self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
+            # evals.eval_one)
+        
+        self._search_tree = MonteCarloSearchTree(self._board, self._colour, sim_count=300)
 
     rnd = Random()
     def board_evaluation(self, colour, board: Board):

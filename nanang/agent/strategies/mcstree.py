@@ -12,7 +12,7 @@ from random import SystemRandom
 class MonteCarloNode:
   exp_factor = 1.41259
 
-  def __init__(self, parent: MonteCarloNode, board: Board, move_from=None):
+  def __init__(self, parent, board, move_from=None):
     self.parent = parent
     self.board = board
     self.successors = []
@@ -21,9 +21,9 @@ class MonteCarloNode:
     self._memoized_moves = None
     self._transition = move_from
   
-  def explore(self, color):
+  def explore(self):
     if self._memoized_moves is None:
-      self._memoized_moves = self.board.possible_moves(color)
+      self._memoized_moves = self.board.possible_moves(self.board.current_turn)
     
     assert(len(self._memoized_moves) > 0)
 
@@ -43,7 +43,7 @@ class MonteCarloNode:
     self.nscore += 1
     self.qscore += int(self.board.current_turn == winner)
     if self.parent is not None:
-      self.parent.backtrack(winner)
+      self.parent.propagate_up(winner)
 
   def node_eval(self):
     if (self.nscore == 0) or (self.parent is None):
@@ -70,12 +70,15 @@ class MonteCarloSearchTree(SearchTree):
     so the MCTS will keep on simulating until a terminal state.
     :param backup_eval: Backup evaluation function when a maximum depth is given.
     """
+    super().__init__(root)
     self.color = color
     self._sim = sim_count
     self._maxdepth = max_depth
     self.backup_eval = backup_eval
-    self.set_root(root)
     self._master_turn_count = 0
+    self._mct_root = None
+    self.set_root(root)
+
 
     self.tree_set = set()
 

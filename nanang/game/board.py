@@ -126,7 +126,7 @@ class Board:
       new_board = self.possible_board(move)
       self._dict_rep = new_board._dict_rep
       self._win_state = new_board._win_state
-      print(str(move))
+      # print(str(move))
       return True
     return False
   
