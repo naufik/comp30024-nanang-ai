@@ -7,7 +7,6 @@ from nanang.game.move import Move
 from nanang.agent.strategies.minimax import Minimax3Tree
 from nanang.agent.searchtree import SearchTree
 import nanang.agent.strategies.evals as evals
-import numpy as np
 from random import Random
 
 class Player:
@@ -64,6 +63,7 @@ class Player:
         # using a simple Minimax3Tree, replace None with the heuristic function.
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, self._eval_func)
         self._states = {}
+        self._features = {}
         self._current_state = 1
 
     def action(self):
@@ -82,16 +82,15 @@ class Player:
         #returns the reward of the state
         if move:
             #check if it is endgame state
-            endgame = self.endgame()
+            next_board = self._board.possible_board(move)
+            endgame = self.endgame(next_board)
             if endgame is not None:
                 self._states[self._current_state] = endgame
-                next_board = self._board.possible_board(move)
-                features = self._eval_func(self._colour, next_board)[1]
-                Player.update_weights(self._states, self._current_state, features)
+                self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
+                Player.update_weights(self._states, self._current_state, self._features)
             else:
-                self._states[self._current_state] = np.arctan(eval_value) / np.pi
+                self._states[self._current_state] = math.atan(eval_value) / math.pi
                 self._current_state += 1
-
             return move.to_tuple()
         else:
             return ("PASS", None)
@@ -117,10 +116,10 @@ class Player:
         """
         move = Move.from_tuple(colour, action)
         self._board = self._board.possible_board(move)
-        endgame = self.endgame()
+        endgame = self.endgame(self._board)
         if endgame is not None:
-            self._states[self._current_state] = endgame
-            Player.update_weights(self._states, self._current_state)
+            self._states[self._current_state-1] = endgame
+            Player.update_weights(self._states, self._current_state, self._features)
         self._search_tree.set_root(self._board)
   
     def is_goal(self, current):
@@ -129,20 +128,19 @@ class Player:
         """
         return (len(current.pieces_of(self._colour)) == 0)
 
-    def endgame(self):
+    def endgame(self, board):
         """
         Checks if the state is an endgame state (win/loss/draw)
         :return: int indicating win/loss/draw with values ranging from [1,-1,0]
         respectively
         """
-        all_exit = 0
         #check if player has won the game
-        if self._board._win_state[self._colour] == all_exit:
+        if board.pieces_of(self._colour) == board._win_state[self._colour]:
             return Player.ENDGAME_STATES["WIN"]
         #check if enemy has won the game
         others = {"R", "G", "B"} - {self._colour}
         for colour in others:
-            if self._board._win_state[colour] == all_exit:
+            if board.pieces_of(self._colour) == board._win_state[colour]:
                 return Player.ENDGAME_STATES["LOSS"]
         #TODO: check for draws
         return None
