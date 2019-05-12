@@ -49,7 +49,9 @@ class Player:
     @staticmethod
     def write_weights(new_weights):
         #TODO: write to txt rather than print lul
-        print(new_weights)
+        with open('weights.txt', 'w') as f:
+            for weight in new_weights:
+                f.write("%s\n" % weight)
 
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
