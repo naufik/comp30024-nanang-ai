@@ -25,7 +25,7 @@ class Player:
     ENDGAME_STATES = {"WIN": 1, "LOSS": -1, "DRAW": 0}
 
     @staticmethod
-    def update_weights(states, current_state):
+    def update_weights(states, current_state, features):
         weights = evals.w
         new_weights = []
         eta = 0.1
@@ -35,7 +35,7 @@ class Player:
             adjustment = 0
             for i in range(current_state):
                 # TODO: find gradient
-                gradient = 0
+                gradient = features[i]
                 telescope = 0
                 for m in range(i):
                     exponent = m - i
@@ -58,8 +58,9 @@ class Player:
         self._n_pieces = len(self._board.pieces_of(self._colour))
         # Do extra initialization steps if it is a single_player game/
         self._goals = Player.GOALS[self._colour]
+        self._eval_func = evals.eval_one
         # using a simple Minimax3Tree, replace None with the heuristic function.
-        self._search_tree = Minimax3Tree(self._board, self._colour, 1, evals.eval_one)
+        self._search_tree = Minimax3Tree(self._board, self._colour, 1, self._eval_func)
         self._states = {}
         self._current_state = 1
 
@@ -82,7 +83,9 @@ class Player:
             endgame = self.endgame()
             if endgame is not None:
                 self._states[self._current_state] = endgame
-                Player.update_weights(self._states, self._current_state)
+                next_board = self._board.possible_board(move)
+                features = self._eval_func(self._colour, next_board)[1]
+                Player.update_weights(self._states, self._current_state, features)
             else:
                 self._states[self._current_state] = np.arctan(eval_value) / np.pi
                 self._current_state += 1

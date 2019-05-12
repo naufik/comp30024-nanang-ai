@@ -22,14 +22,29 @@ def mn_dist(color, board: Board):
 w = [500, 250, 2000, 200, 200]
 
 def eval_one(color, board: Board):
+  features = []
   h0 = 0
-  h0 += w[0] * len(board.pieces_of(color))
   others = {"R", "G", "B"} - {color}
-  h0 -= w[1] * sum(len(board.pieces_of(c)) for c in others)
-  h0 += w[2] * board._win_state[color]
-  h0 -= w[3] * mn_dist(color, board)
-  h0 += w[4] * sum([0] + [mn_dist(x, board) for x in others])
-  return h0
+
+  feature1 = len(board.pieces_of(color))
+  features.append(feature1)
+
+  feature2 = sum(len(board.pieces_of(c)) for c in others)
+  features.append(feature2)
+
+  feature3 = board._win_state[color]
+  features.append(feature3)
+
+  feature4 = mn_dist(color, board)
+  features.append(feature4)
+
+  feature5 = sum([0] + [mn_dist(x, board) for x in others])
+  features.append(feature5)
+
+  for i in range(len(features)):
+    h0 += w[i] * features[i]
+
+  return h0, features
 
 rng = SystemRandom()
 def best_eval_ever(color, board: Board):
