@@ -11,6 +11,12 @@ blocking pieces.)
 from nanang.game.move import Move
 
 class Board:
+  GOALS = {        
+    "R": [(3, -3), (3, -2), (3, -1), (3, 0)],
+    "G":  [(-3, 3), (-2, 3), (-1, 3), (0, 3)],
+    "B":  [(0, -3), (-1, -2), (-2, -1), (-3, 0)]
+  }
+
   _turn_dict = {"R": "G", "G": "B", "B": "R"}
 
   @staticmethod
@@ -82,11 +88,9 @@ class Board:
         map(add0, 
         Move.DELTAS_JUMP + Move.DELTAS_MOVE) if Move._in_board(x)])
       
-      try:
+      if pos in Board.GOALS[controller]:
         # really hackish way to consider the exit moves, may change later.
         moves.append(Move(controller, pos, None))
-      except AssertionError:
-        pass
 
     if moves == []:
       # add the pass move if there are no possible moves.
