@@ -19,16 +19,16 @@ def mn_dist(color, board: Board):
   pieces = board.pieces_of(color)
   return sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])
 
-w = [500, 2000, 200]
+w = [500, 250, 2000, 200, 200]
 
 def eval_one(color, board: Board):
   h0 = 0
   h0 += w[0] * len(board.pieces_of(color))
   others = {"R", "G", "B"} - {color}
-  h0 -= 0.5 * w[0] * sum(len(board.pieces_of(c)) for c in others)
-  h0 += w[1] * board._win_state[color]
-  h0 -= w[2] * mn_dist(color, board)
-  h0 += w[2] * sum([0] + [mn_dist(x, board) for x in others])
+  h0 -= w[1] * sum(len(board.pieces_of(c)) for c in others)
+  h0 += w[2] * board._win_state[color]
+  h0 -= w[3] * mn_dist(color, board)
+  h0 += w[4] * sum([0] + [mn_dist(x, board) for x in others])
   return h0
 
 rng = SystemRandom()

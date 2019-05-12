@@ -7,7 +7,7 @@ from nanang.game.move import Move
 from nanang.agent.strategies.minimax import Minimax3Tree
 from nanang.agent.searchtree import SearchTree
 import nanang.agent.strategies.evals as evals
-
+import numpy as np
 from random import Random
 
 class Player:
@@ -22,51 +22,46 @@ class Player:
         "B":  [(0, -3), (-1, -2), (-2, -1), (-3, 0)]
     }
 
+    ENDGAME_STATES = {"WIN": 1, "LOSS": -1, "DRAW": 0}
 
-    # def __init__(self, board, color, single=True):
+    @staticmethod
+    def update_weights(states, current_state):
+        weights = evals.w
+        new_weights = []
+        eta = 0.1
+        lambDUH = 0.7
+        for weight in weights:
+            w = weight
+            adjustment = 0
+            for i in range(current_state):
+                # TODO: find gradient
+                gradient = 0
+                telescope = 0
+                for m in range(i):
+                    exponent = m - i
+                    dm = states[m]
+                    telescope += (lambDUH ** exponent) * dm
+                adjustment += gradient * telescope
+            w += eta * adjustment
+            new_weights.append(w)
+        Player.write_weights(new_weights)
+
+    @staticmethod
+    def write_weights(new_weights):
+        #TODO: write to txt rather than print lul
+        print(new_weights)
+
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
         self._colour = colour[0].upper()
         self._board = Board(Board.initialize_board())
         self._n_pieces = len(self._board.pieces_of(self._colour))
-
         # Do extra initialization steps if it is a single_player game/
         self._goals = Player.GOALS[self._colour]
-
         # using a simple Minimax3Tree, replace None with the heuristic function.
-        self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
-            evals.eval_one)
-
-    rnd = Random()
-    def board_evaluation(self, colour, board: Board):
-        # """
-        #
-        # :param colour:
-        # :param board:
-        # :return:
-        # """
-        #
-        # enemy_dist = 0
-        # player_pieces = len(board.pieces_of(self._colour))
-        #
-        # # calculate distance for enemy players to their goal
-        # player_dist = 0
-        # enemy_pieces = 0
-        # for player, goals in Player.GOALS.items():
-        #     pieces = board.pieces_of(player)
-        #     for piece_coor in pieces:
-        #         if player == self._colour:
-        #             player_dist += Player.dist_nearest_goal(piece_coor, goals)
-        #         else:
-        #             enemy_dist += Player.dist_nearest_goal(piece_coor, goals)
-        #     if player != self._colour:
-        #         enemy_pieces += len(board.pieces_of(player))
-        # #calculate distance for enemy players to their goal
-        #
-        # ngasal = 0.5
-        # lebih_ngasal = 1.1
-        # return -lebih_ngasal*player_dist + ngasal*enemy_dist + lebih_ngasal*player_pieces - ngasal*enemy_pieces
-        return Player.rnd.random() + 1000 * board._win_state[colour]
+        self._search_tree = Minimax3Tree(self._board, self._colour, 1, evals.eval_one)
+        self._states = {}
+        self._current_state = 1
 
     def action(self):
         """
@@ -79,16 +74,23 @@ class Player:
         must be represented based on the above instructions for representing
         actions.
         """
-        # TODO: Decide what action to take.
 
-        # selangkah_keseberang = True
-        # if selangkah_keseberang:
-        #     return move.to_tuple()
-        move: Move = self._search_tree.next_best()
+        move, eval_value = self._search_tree.next_best()
+        #returns the reward of the state
         if move:
+            #check if it is endgame state
+            endgame = self.endgame()
+            if endgame is not None:
+                self._states[self._current_state] = endgame
+                Player.update_weights(self._states, self._current_state)
+            else:
+                self._states[self._current_state] = np.arctan(eval_value) / np.pi
+                self._current_state += 1
+
             return move.to_tuple()
         else:
             return ("PASS", None)
+
 
     def update(self, colour, action):
         """
@@ -110,6 +112,10 @@ class Player:
         """
         move = Move.from_tuple(colour, action)
         self._board = self._board.possible_board(move)
+        endgame = self.endgame()
+        if endgame is not None:
+            self._states[self._current_state] = endgame
+            Player.update_weights(self._states, self._current_state)
         self._search_tree.set_root(self._board)
   
     def is_goal(self, current):
@@ -117,3 +123,21 @@ class Player:
         Checks if the state passed in current is a goal state.
         """
         return (len(current.pieces_of(self._colour)) == 0)
+
+    def endgame(self):
+        """
+        Checks if the state is an endgame state (win/loss/draw)
+        :return: int indicating win/loss/draw with values ranging from [1,-1,0]
+        respectively
+        """
+        all_exit = 0
+        #check if player has won the game
+        if self._board._win_state[self._colour] == all_exit:
+            return Player.ENDGAME_STATES["WIN"]
+        #check if enemy has won the game
+        others = {"R", "G", "B"} - {self._colour}
+        for colour in others:
+            if self._board._win_state[colour] == all_exit:
+                return Player.ENDGAME_STATES["LOSS"]
+        #TODO: check for draws
+        return None

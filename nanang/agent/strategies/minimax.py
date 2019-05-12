@@ -38,7 +38,7 @@ class Minimax3Tree(SearchTree):
     else:  
       self.set_root(self._root.possible_board(best_move))
       
-    return best_move
+    return best_move, best_eval
     
   
   def eval_node(self, node):
