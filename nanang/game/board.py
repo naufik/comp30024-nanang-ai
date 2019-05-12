@@ -252,12 +252,12 @@ class Board:
     if self._win_state["R"] == 4:
       return "R"
     elif self._win_state["G"] == 4:
-      return "G":
+      return "G"
     elif self._win_state["B"] == 4:
       return "B"
     else:
       return None
-      
+
   def as_dict(self, other):
     """
     Returns the dictionary representation of the board.
