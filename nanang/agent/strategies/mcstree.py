@@ -1,5 +1,6 @@
 from nanang.agent.searchtree import SearchTree
 from nanang.game.board import Board
+from nanang.game.move import Move
 from math import sqrt, log
 from random import SystemRandom
 
@@ -11,13 +12,14 @@ from random import SystemRandom
 class MonteCarloNode:
   exp_factor = 1.41259
 
-  def __init__(self, parent: MonteCarloNode, board: Board):
+  def __init__(self, parent: MonteCarloNode, board: Board, move_from=None):
     self.parent = parent
     self.board = board
     self.successors = []
     self.qscore = 0
     self.nscore = 0
     self._memoized_moves = None
+    self._transition = move_from
   
   def explore(self, color):
     if self._memoized_moves is None:
@@ -26,9 +28,12 @@ class MonteCarloNode:
     assert(len(self._memoized_moves) > 0)
 
     index = MonteCarloSearchTree.rng.randint(0, len(self._memoized_moves) - 1)
+    
+    # select a random move
+    move = self._memoized_moves.pop(index)
 
     new_node = MonteCarloNode(self, 
-      self.board.possible_board(self._memoized_moves.pop(index)))
+      self.board.possible_board(move), move_from=move)
 
     self.successors.append(new_node)
     return new_node
@@ -87,7 +92,6 @@ class MonteCarloSearchTree(SearchTree):
     
     if (new_root.current_turn == self.color):    
       self._master_turn_count += 1
-    
 
   def find_in_set(self, board):
     for node in self.tree_set:
@@ -97,7 +101,12 @@ class MonteCarloSearchTree(SearchTree):
 
   def next_best(self):
     self.monte_carlo_fullsearch()
-    return max(self._mct_root.successors, key=lambda n: n.nscore)
+    if len(self._mct_root.successors) == 0:
+      return Move(self.color, None, None)
+    else:
+      candidate = max(self._mct_root.successors, key=lambda n: n.nscore)
+      return candidate._transition
+
 
   def monte_carlo_fullsearch(self):
     for _ in range(self._sim):
