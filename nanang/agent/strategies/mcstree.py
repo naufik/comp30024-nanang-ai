@@ -76,22 +76,22 @@ class MonteCarloSearchTree(SearchTree):
     self._maxdepth = max_depth
     self.backup_eval = backup_eval
     self._master_turn_count = 0
+    self.tree_set = set()
     self._mct_root = None
     self.set_root(root)
 
 
-    self.tree_set = set()
 
   # Override
   def set_root(self, new_root):
     super().set_root(new_root)
     
-    # x_node = self.find_in_set(new_root)
-    # if x_node is not None:
-      # self._mct_root = x_node
-    # else:
-    self._mct_root = MonteCarloNode(self._mct_root, new_root)
-    # self.tree_set.add(new_node)
+    x_node = self.find_in_set(new_root)
+    if x_node is not None:
+      self._mct_root = x_node
+    else:
+      self._mct_root = MonteCarloNode(self._mct_root, new_root)
+      self.tree_set.add(self._mct_root)
     
     if (new_root.current_turn == self.color):    
       self._master_turn_count += 1
@@ -125,13 +125,16 @@ class MonteCarloSearchTree(SearchTree):
   def monte_carlo_select(self, node: MonteCarloNode):
     return_node = node
 
+    if (node._memoized_moves is None) or (len(node._memoized_moves) > 0):
+      return return_node
+    
     if node.successors != []:
       max_node = self.monte_carlo_select(max(node.successors, 
         key=MonteCarloNode.node_eval))
-      
+
       return max_node
 
-    return return_node.explore()
+    return return_node
   
   def monte_carlo_simulate(self, node):
     board: Board = node.board

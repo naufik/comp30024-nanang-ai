@@ -8,6 +8,7 @@ from nanang.agent.strategies.minimax import Minimax3Tree
 from nanang.agent.strategies.mcstree import MonteCarloSearchTree, MonteCarloNode
 from nanang.agent.searchtree import SearchTree
 import nanang.agent.strategies.evals as evals
+import cProfile
 
 from random import Random
 
@@ -87,7 +88,8 @@ class Player:
         # selangkah_keseberang = True
         # if selangkah_keseberang:
         #     return move.to_tuple()
-        move: Move = self._search_tree.next_best()
+        move: Move = None
+        cProfile.runctx("move = self._search_tree.next_best()", globals(), locals())
         if move:
             return move.to_tuple()
         else:

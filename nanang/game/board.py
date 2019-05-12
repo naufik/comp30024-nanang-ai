@@ -47,6 +47,10 @@ class Board:
 
     return board_dict
 
+  @staticmethod
+  def vecadd(pos0, pos1):
+    return (pos0[0] + pos1[0], pos0[1] + pos1[1])
+
   def __init__(self, board_dict, winner_dict=None, current="R", debug=False):
     # The dictionary representation of the board.
     self._dict_rep = board_dict
@@ -73,8 +77,9 @@ class Board:
 
     moves = []
     for pos in pieces_pos:
+      add0 = lambda t: Board.vecadd(pos, t)
       moves.extend([Move(controller, pos, x) for x in   \
-        map(lambda i: (pos[0] + i[0], pos[1] + i[1]), 
+        map(add0, 
         Move.DELTAS_JUMP + Move.DELTAS_MOVE) if Move._in_board(x)])
       
       try:
@@ -87,7 +92,7 @@ class Board:
       # add the pass move if there are no possible moves.
       moves.append(Move(controller, None, None))
     
-    return list(filter(lambda move: self.valid_move(move), moves))
+    return list(filter(self.valid_move, moves))
 
   def pieces_of(self, controller):
     assert(controller in ["R", "G", "B"])
