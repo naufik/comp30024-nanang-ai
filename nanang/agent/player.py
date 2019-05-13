@@ -45,12 +45,10 @@ class Player:
                 telescope = 0
                 for m in range(i):
                     exponent = m - i
-                    #something wrong here
+                    #something wrong here?
                     dm = state_evals[m+1] - state_evals[m]
                     telescope += (lambDUH ** exponent) * dm
-                print("telescope ", telescope)
                 adjustment += gradient * telescope
-            print("adjustment:", adjustment)
             w += eta * adjustment
             new_weights.append(w)
         print("just a test bro", new_weights)
@@ -121,16 +119,13 @@ class Player:
         respectively
         """
         #check if player has won the game
-        print("kambing")
-        print()
+
         if board._win_state[self._colour] == Player.NUM_PIECES_TO_WIN:
-            print("kontol")
             return Player.ENDGAME_STATES["WIN"]
         #check if enemy has won the game
         others = {"R", "G", "B"} - {self._colour}
         for colour in others:
             if board._win_state[colour] == Player.NUM_PIECES_TO_WIN:
-                print("ngehe")
                 return Player.ENDGAME_STATES["LOSS"]
         #TODO: check for draws
         return None
