@@ -8,6 +8,7 @@ from nanang.agent.strategies.minimax import Minimax3Tree
 from nanang.agent.strategies.mcstree import MonteCarloSearchTree, MonteCarloNode
 from nanang.agent.searchtree import SearchTree
 import nanang.agent.strategies.evals as evals
+import csv
 
 from random import Random
 
@@ -38,6 +39,7 @@ class Player:
         new_weights = []
         eta = 0.1
         lambDUH = 0.7
+        new_weights.append(colour)
         for weight in weights:
             w = weight
             adjustment = 0
@@ -51,20 +53,16 @@ class Player:
                     telescope += (lambDUH ** exponent) * dm
                 adjustment += gradient * telescope
             w += eta * adjustment
-            new_weights.append(w)
+            new_weights.append(str(w))
         print("New Weight: ", new_weights)
-        Player.write_weights(new_weights, colour)
+        Player.write_weights(new_weights)
 
     @staticmethod
-    def write_weights(new_weights, colour):
-        #TODO: write to txt rather than print lul
-        with open('weights.txt', 'a') as f:
-            f.write("weights for color: " + colour + "\n")
-            for weight in new_weights:
-                f.write(str(weight)+"\n")
-            f.write("\n")
-            f.close()
-
+    def write_weights(new_weights):
+        with open('weights.csv', 'a') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerow(new_weights)
+        csvFile.close()
 
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
