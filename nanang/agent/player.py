@@ -27,11 +27,11 @@ class Player:
 
     @staticmethod
     def update_weights(state_evals, current_state, features, colour):
-        print("cool", state_evals)
-        print("len states", len(state_evals))
-        print("current states", current_state)
-        print("features", features)
-        print("len features", len(features))
+        # print("cool", state_evals)
+        # print("len states", len(state_evals))
+        # print("current states", current_state)
+        # print("features", features)
+        # print("len features", len(features))
         weights = evals.w
         new_weights = []
         eta = 0.1
@@ -43,15 +43,14 @@ class Player:
                 # TODO: find gradient
                 gradient = features[i][weights.index(w)]
                 telescope = 0
-                for m in range(i):
+                for m in range(i, current_state-1):
                     exponent = m - i
-                    #something wrong here?
                     dm = state_evals[m+1] - state_evals[m]
                     telescope += (lambDUH ** exponent) * dm
                 adjustment += gradient * telescope
             w += eta * adjustment
             new_weights.append(w)
-        print("just a test bro", new_weights)
+        print("New Weight: ", new_weights)
         Player.write_weights(new_weights, colour)
 
     @staticmethod
@@ -86,9 +85,8 @@ class Player:
             #check if it is endgame state
             next_board = self._board.possible_board(move)
             endgame = self.endgame(next_board)
-            print("endgame value", endgame)
+            # print("endgame value", endgame)
             if endgame is not None:
-                print("it's None fam")
                 self._states[self._current_state] = endgame
                 self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                 #do I need to do this part if it's being called from update anyways? Yes update_weight() for winner
@@ -122,7 +120,6 @@ class Player:
         respectively
         """
         #check if player has won the game
-
         if board._win_state[self._colour] == Player.NUM_PIECES_TO_WIN:
             return Player.ENDGAME_STATES["WIN"]
         #check if enemy has won the game
