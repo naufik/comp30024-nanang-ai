@@ -23,8 +23,15 @@ class Player:
 
     ENDGAME_STATES = {"WIN": 1, "LOSS": -1, "DRAW": 0}
 
+    NUM_PIECES_TO_WIN = 4
+
     @staticmethod
     def update_weights(states, current_state, features):
+        print("cool", states)
+        print("len states", len(states))
+        print("current states", current_state)
+        print("features", features)
+        print("len features", len(features))
         weights = evals.w
         new_weights = []
         eta = 0.1
@@ -34,15 +41,18 @@ class Player:
             adjustment = 0
             for i in range(current_state):
                 # TODO: find gradient
-                gradient = features[i]
+                gradient = features[i][weights.index(w)]
                 telescope = 0
                 for m in range(i):
                     exponent = m - i
                     dm = states[m]
                     telescope += (lambDUH ** exponent) * dm
+                print("telescope ", telescope)
                 adjustment += gradient * telescope
+            print("adjustment:", adjustment)
             w += eta * adjustment
             new_weights.append(w)
+        print("just a test bro", new_weights)
         Player.write_weights(new_weights)
 
     @staticmethod
@@ -50,7 +60,8 @@ class Player:
         #TODO: write to txt rather than print lul
         with open('weights.txt', 'w') as f:
             for weight in new_weights:
-                f.write("%s\n" % weight)
+                f.write(str(weight))
+            f.close()
 
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
@@ -64,32 +75,25 @@ class Player:
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, self._eval_func)
         self._states = {}
         self._features = {}
-        self._current_state = 1
+        self._current_state = 0
 
     def action(self):
-        """
-        This method is called at the beginning of each of your turns to request
-        a choice of action from your program.
-
-        Based on the current state of the game, your player should select and
-        return an allowed action to play on this turn. If there are no allowed
-        actions, your player must return a pass instead. The action (or pass)
-        must be represented based on the above instructions for representing
-        actions.
-        """
-
         move, eval_value = self._search_tree.next_best()
         #returns the reward of the state
         if move:
             #check if it is endgame state
             next_board = self._board.possible_board(move)
             endgame = self.endgame(next_board)
+            print("endgame value", endgame)
             if endgame is not None:
+                print("it's None fam")
                 self._states[self._current_state] = endgame
                 self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
+                #do I need to do this part if it's being called from update anyways?
                 Player.update_weights(self._states, self._current_state, self._features)
             else:
                 self._states[self._current_state] = math.atan(eval_value) / math.pi
+                self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                 self._current_state += 1
             return move.to_tuple()
         else:
@@ -97,36 +101,16 @@ class Player:
 
 
     def update(self, colour, action):
-        """
-        This method is called at the end of every turn (including your player’s
-        turns) to inform your player about the most recent action. You should
-        use this opportunity to maintain your internal representation of the
-        game state and any other information about the game you are storing.
-
-        The parameter colour will be a string representing the player whose turn
-        it is (Red, Green or Blue). The value will be one of the strings "red",
-        "green", or "blue" correspondingly.
-
-        The parameter action is a representation of the most recent action (or
-        pass) conforming to the above in- structions for representing actions.
-
-        You may assume that action will always correspond to an allowed action
-        (or pass) for the player colour (your method does not need to validate
-        the action/pass against the game rules).
-        """
+        #print("mercusuar", self._states, self._features, self._current_state)
         move = Move.from_tuple(colour, action)
         self._board = self._board.possible_board(move)
         endgame = self.endgame(self._board)
+        print("endgame value central junction bby", endgame)
         if endgame is not None:
             self._states[self._current_state-1] = endgame
             Player.update_weights(self._states, self._current_state, self._features)
         self._search_tree.set_root(self._board)
-  
-    def is_goal(self, current):
-        """
-        Checks if the state passed in current is a goal state.
-        """
-        return (len(current.pieces_of(self._colour)) == 0)
+
 
     def endgame(self, board):
         """
@@ -135,12 +119,16 @@ class Player:
         respectively
         """
         #check if player has won the game
-        if board.pieces_of(self._colour) == board._win_state[self._colour]:
+        print("kambing")
+        print()
+        if board._win_state[self._colour] == Player.NUM_PIECES_TO_WIN:
+            print("kontol")
             return Player.ENDGAME_STATES["WIN"]
         #check if enemy has won the game
         others = {"R", "G", "B"} - {self._colour}
         for colour in others:
-            if board.pieces_of(self._colour) == board._win_state[colour]:
+            if board._win_state[colour] == Player.NUM_PIECES_TO_WIN:
+                print("ngehe")
                 return Player.ENDGAME_STATES["LOSS"]
         #TODO: check for draws
         return None

@@ -19,7 +19,7 @@ def mn_dist(color, board: Board):
   pieces = board.pieces_of(color)
   return sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])
 
-w = [500, 250, 2000, 200, 200]
+w = [500, 250, 50000000, 200, 200]
 
 def eval_one(color, board: Board):
   features = []
@@ -29,13 +29,14 @@ def eval_one(color, board: Board):
   feature1 = len(board.pieces_of(color))
   features.append(feature1)
 
-  feature2 = sum(len(board.pieces_of(c)) for c in others)
+
+  feature2 = -sum(len(board.pieces_of(c)) for c in others)
   features.append(feature2)
 
   feature3 = board._win_state[color]
   features.append(feature3)
 
-  feature4 = mn_dist(color, board)
+  feature4 = -mn_dist(color, board)
   features.append(feature4)
 
   feature5 = sum([0] + [mn_dist(x, board) for x in others])
