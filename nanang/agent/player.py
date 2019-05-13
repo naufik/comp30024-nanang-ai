@@ -26,9 +26,9 @@ class Player:
     NUM_PIECES_TO_WIN = 4
 
     @staticmethod
-    def update_weights(states, current_state, features):
-        print("cool", states)
-        print("len states", len(states))
+    def update_weights(state_evals, current_state, features):
+        print("cool", state_evals)
+        print("len states", len(state_evals))
         print("current states", current_state)
         print("features", features)
         print("len features", len(features))
@@ -45,7 +45,8 @@ class Player:
                 telescope = 0
                 for m in range(i):
                     exponent = m - i
-                    dm = states[m]
+                    #something wrong here
+                    dm = state_evals[m+1] - state_evals[m]
                     telescope += (lambDUH ** exponent) * dm
                 print("telescope ", telescope)
                 adjustment += gradient * telescope
@@ -89,7 +90,7 @@ class Player:
                 print("it's None fam")
                 self._states[self._current_state] = endgame
                 self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
-                #do I need to do this part if it's being called from update anyways?
+                #do I need to do this part if it's being called from update anyways? Yes update_weight() for winner
                 Player.update_weights(self._states, self._current_state, self._features)
             else:
                 self._states[self._current_state] = math.atan(eval_value) / math.pi
@@ -106,7 +107,8 @@ class Player:
         self._board = self._board.possible_board(move)
         endgame = self.endgame(self._board)
         print("endgame value central junction bby", endgame)
-        if endgame is not None:
+        #update_weight for losers
+        if endgame == -1:
             self._states[self._current_state-1] = endgame
             Player.update_weights(self._states, self._current_state, self._features)
         self._search_tree.set_root(self._board)
