@@ -5,8 +5,10 @@ import heapq as heap
 from nanang.game.board import Board
 from nanang.game.move import Move
 from nanang.agent.strategies.minimax import Minimax3Tree
+from nanang.agent.strategies.mcstree import MonteCarloSearchTree, MonteCarloNode
 from nanang.agent.searchtree import SearchTree
 import nanang.agent.strategies.evals as evals
+
 from random import Random
 
 class Player:

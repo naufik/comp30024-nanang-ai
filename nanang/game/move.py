@@ -4,7 +4,7 @@ class Move:
   DELTAS_MOVE = [ (0, 1), (0, -1), (1, -1), (-1, 1), (-1, 0), (1,0) ]
   DELTAS_JUMP = [ (0, 2), (0, -2), (2, -2), (-2, 2), (2, 0), (-2, 0) ]
 
-  BOARD_RANGE = [(q,r) for q in _bran for r in _bran if -q-r in _bran]
+  BOARD_RANGE = set([(q,r) for q in _bran for r in _bran if -q-r in _bran])
 
   @staticmethod
   def from_tuple(controller, action):

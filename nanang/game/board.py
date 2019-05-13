@@ -11,6 +11,12 @@ blocking pieces.)
 from nanang.game.move import Move
 
 class Board:
+  GOALS = {        
+    "R": [(3, -3), (3, -2), (3, -1), (3, 0)],
+    "G":  [(-3, 3), (-2, 3), (-1, 3), (0, 3)],
+    "B":  [(0, -3), (-1, -2), (-2, -1), (-3, 0)]
+  }
+
   _turn_dict = {"R": "G", "G": "B", "B": "R"}
 
   @staticmethod
@@ -47,6 +53,10 @@ class Board:
 
     return board_dict
 
+  @staticmethod
+  def vecadd(pos0, pos1):
+    return (pos0[0] + pos1[0], pos0[1] + pos1[1])
+
   def __init__(self, board_dict, winner_dict=None, current="R", debug=False):
     # The dictionary representation of the board.
     self._dict_rep = board_dict
@@ -73,21 +83,20 @@ class Board:
 
     moves = []
     for pos in pieces_pos:
+      add0 = lambda t: Board.vecadd(pos, t)
       moves.extend([Move(controller, pos, x) for x in   \
-        map(lambda i: (pos[0] + i[0], pos[1] + i[1]), 
+        map(add0, 
         Move.DELTAS_JUMP + Move.DELTAS_MOVE) if Move._in_board(x)])
       
-      try:
+      if pos in Board.GOALS[controller]:
         # really hackish way to consider the exit moves, may change later.
         moves.append(Move(controller, pos, None))
-      except AssertionError:
-        pass
 
     if moves == []:
       # add the pass move if there are no possible moves.
       moves.append(Move(controller, None, None))
     
-    return list(filter(lambda move: self.valid_move(move), moves))
+    return list(filter(self.valid_move, moves))
 
   def pieces_of(self, controller):
     assert(controller in ["R", "G", "B"])
@@ -126,7 +135,7 @@ class Board:
       new_board = self.possible_board(move)
       self._dict_rep = new_board._dict_rep
       self._win_state = new_board._win_state
-      print(str(move))
+      # print(str(move))
       return True
     return False
   
@@ -248,6 +257,16 @@ class Board:
     board = template.format(message, *cells)
     return board
   
+  def get_winner(self):
+    if self._win_state["R"] == 4:
+      return "R"
+    elif self._win_state["G"] == 4:
+      return "G"
+    elif self._win_state["B"] == 4:
+      return "B"
+    else:
+      return None
+
   def as_dict(self, other):
     """
     Returns the dictionary representation of the board.
