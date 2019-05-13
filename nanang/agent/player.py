@@ -26,7 +26,7 @@ class Player:
     NUM_PIECES_TO_WIN = 4
 
     @staticmethod
-    def update_weights(state_evals, current_state, features):
+    def update_weights(state_evals, current_state, features, colour):
         print("cool", state_evals)
         print("len states", len(state_evals))
         print("current states", current_state)
@@ -39,7 +39,7 @@ class Player:
         for weight in weights:
             w = weight
             adjustment = 0
-            for i in range(current_state):
+            for i in range(current_state-1):
                 # TODO: find gradient
                 gradient = features[i][weights.index(w)]
                 telescope = 0
@@ -52,15 +52,18 @@ class Player:
             w += eta * adjustment
             new_weights.append(w)
         print("just a test bro", new_weights)
-        Player.write_weights(new_weights)
+        Player.write_weights(new_weights, colour)
 
     @staticmethod
-    def write_weights(new_weights):
+    def write_weights(new_weights, colour):
         #TODO: write to txt rather than print lul
-        with open('weights.txt', 'w') as f:
+        with open('weights.txt', 'a') as f:
+            f.write("weights for color: " + colour + "\n")
             for weight in new_weights:
-                f.write(str(weight))
+                f.write(str(weight)+"\n")
+            f.write("\n")
             f.close()
+
 
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
@@ -89,7 +92,7 @@ class Player:
                 self._states[self._current_state] = endgame
                 self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                 #do I need to do this part if it's being called from update anyways? Yes update_weight() for winner
-                Player.update_weights(self._states, self._current_state, self._features)
+                Player.update_weights(self._states, self._current_state, self._features, self._colour)
             else:
                 self._states[self._current_state] = math.atan(eval_value) / math.pi
                 self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
@@ -108,7 +111,7 @@ class Player:
         #update_weight for losers
         if endgame == -1:
             self._states[self._current_state-1] = endgame
-            Player.update_weights(self._states, self._current_state, self._features)
+            Player.update_weights(self._states, self._current_state, self._features, self._colour)
         self._search_tree.set_root(self._board)
 
 
