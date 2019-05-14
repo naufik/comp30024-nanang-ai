@@ -25,8 +25,9 @@ class Player:
     }
 
     ENDGAME_STATES = {"WIN": 1, "LOSS": -1, "DRAW": 0}
-
     NUM_PIECES_TO_WIN = 4
+    MAX_STATES = 254
+
 
     @staticmethod
     def update_weights(state_evals, current_state, features, colour):
@@ -77,16 +78,17 @@ class Player:
         self._states = {}
         self._features = {}
         self._current_state = 0
+        self._past_boards = {}
+        self._past_boards[self._board] = 1
 
     def action(self):
         move, eval_value = self._search_tree.next_best()
         #returns the reward of the state
         if move:
-            #check if it is endgame state
+            #check if the
             next_board = self._board.possible_board(move)
             endgame = self.endgame(next_board)
-            # print("endgame value", endgame)
-            if endgame is not None:
+            if endgame == 1:
                 self._states[self._current_state] = endgame
                 self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                 #do I need to do this part if it's being called from update anyways? Yes update_weight() for winner
@@ -101,13 +103,18 @@ class Player:
 
 
     def update(self, colour, action):
-        #print("mercusuar", self._states, self._features, self._current_state)
+        #update existing board
         move = Move.from_tuple(colour, action)
         self._board = self._board.possible_board(move)
+
+        if self._board not in self._past_boards.keys():
+            self._past_boards[self._board] = 1
+        else:
+            self._past_boards[self._board] += 1
+
+        #check if endgame, update weight for losers and draws
         endgame = self.endgame(self._board)
-        print("endgame value central junction bby", endgame)
-        #update_weight for losers
-        if endgame == -1:
+        if endgame == -1 or endgame == 0:
             self._states[self._current_state-1] = endgame
             Player.update_weights(self._states, self._current_state, self._features, self._colour)
         self._search_tree.set_root(self._board)
@@ -127,5 +134,10 @@ class Player:
         for colour in others:
             if board._win_state[colour] == Player.NUM_PIECES_TO_WIN:
                 return Player.ENDGAME_STATES["LOSS"]
-        #TODO: check for draws
+        #check for draws
+        if self._current_state == Player.MAX_STATES:
+            return Player.ENDGAME_STATES["DRAW"]
+        for occurrences in self._past_boards.values():
+            if occurrences == 4:
+                return Player.ENDGAME_STATES["DRAW"]
         return None
