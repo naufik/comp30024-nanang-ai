@@ -28,14 +28,13 @@ class Player:
 
     NUM_PIECES_TO_WIN = 4
 
-    @staticmethod
-    def update_weights(state_evals, current_state, features, colour):
+    def update_weights(self, state_evals, current_state, features, colour):
         # print("cool", state_evals)
         # print("len states", len(state_evals))
         # print("current states", current_state)
         # print("features", features)
         # print("len features", len(features))
-        weights = evals.w
+        weights = self._weights
         new_weights = []
         eta = 0.1
         lambDUH = 0.7
@@ -62,7 +61,21 @@ class Player:
         with open('weights.csv', 'a') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(new_weights)
-        csvFile.close()
+            csvFile.close()
+    
+    @staticmethod
+    def read_weights(color):
+        csv_file = open("weights.csv")
+        lines = list(filter(bool, csv.reader(csv_file)))
+        lines.reverse()
+        lines = sorted(lines[:3])
+        if color == "B":
+            return list(map(float, lines[0][1:]))
+        elif color == "G":
+            return list(map(float, lines[1][1:]))
+        elif color == "R":
+            return list(map(float, lines[2][1:]))
+        assert(False)
 
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
@@ -71,7 +84,8 @@ class Player:
         self._n_pieces = len(self._board.pieces_of(self._colour))
         # Do extra initialization steps if it is a single_player game/
         self._goals = Player.GOALS[self._colour]
-        self._eval_func = evals.eval_one
+        self._weights = Player.read_weights(self._colour)
+        self._eval_func = lambda color, node: evals.eval_one(color, node, weights=self._weights)
         # using a simple Minimax3Tree, replace None with the heuristic function.
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, self._eval_func)
         self._states = {}
@@ -90,7 +104,7 @@ class Player:
                 self._states[self._current_state] = endgame
                 self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                 #do I need to do this part if it's being called from update anyways? Yes update_weight() for winner
-                Player.update_weights(self._states, self._current_state, self._features, self._colour)
+                self.update_weights(self._states, self._current_state, self._features, self._colour)
             else:
                 self._states[self._current_state] = math.atan(eval_value) / math.pi
                 self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
@@ -109,7 +123,7 @@ class Player:
         #update_weight for losers
         if endgame == -1:
             self._states[self._current_state-1] = endgame
-            Player.update_weights(self._states, self._current_state, self._features, self._colour)
+            self.update_weights(self._states, self._current_state, self._features, self._colour)
         self._search_tree.set_root(self._board)
 
 
