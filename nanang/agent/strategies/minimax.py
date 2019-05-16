@@ -53,16 +53,30 @@ class Minimax3Tree(SearchTree):
 
     # evaluate a single "layer" of minimax search (a single layer here is
     # equivalent to three layers since we have three players!)
-    return self._eval_minimax_layer(board_next, next_player, thresh)
+    return self._eval_minimax_layer(board_next, next_player, thresh,
+      self._xdepth)
 
-  def _eval_minimax_layer(self, board, player, threshold=None):
+  def _eval_minimax_layer(self, board, player, threshold=None, depth=1):
     # try to re implement iteratively instead of recursively to save time.
     # TODO: add memoization.
 
     if (player == self._color):
       moves = board.possible_moves(player)
-      return max([self.eval_node(board.possible_board(move)) for move in moves] +
-        [inf if board._win_state[player] >= 4 else -inf])
+      if depth == 0:
+        return max([self.eval_node(board.possible_board(move)) for move in moves] +
+          [inf if board._win_state[player] >= 4 else -inf])
+      elif depth > 0:
+        evals_max = None
+
+        for move in moves:
+          next_board = board.possible_board(move)
+          measure = self._eval_minimax_layer(next_board,
+          Board.next_player(player), evals_max, depth=depth-1)
+
+        if evals_max is None or evals_max < measure:
+          evals_max = measure
+      return evals_max
+
     else:
       moves = board.possible_moves(player)
       evals_min = None
@@ -74,7 +88,7 @@ class Minimax3Tree(SearchTree):
         # we expand the board.
         # self._tree[board].append(next_board)
         measure = self._eval_minimax_layer(next_board,
-          Board.next_player(player), evals_min)
+          Board.next_player(player), evals_min, depth)
 
         if evals_min is None or evals_min > measure:
           evals_min = measure
