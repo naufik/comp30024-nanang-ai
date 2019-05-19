@@ -58,3 +58,42 @@ rng = SystemRandom()
 def best_eval_ever(color, board: Board):
   return rng.randint(-3000, 3000) + 50000 * board._win_state[color]
 
+
+DEFAULT_WEIGHTS = [10 for i in range(10)]
+def linear_reg_eval(color, board: Board, weights=DEFAULT_WEIGHTS):
+  features = []
+  COORDS = sorted(board._dict_rep.keys())
+  # print(COORDS)
+
+  h0 = 0.0
+  others = {"R","G","B"} - {color}
+  for point in COORDS:
+    features.append(int(board._dict_rep[point] == color))
+  for point in COORDS:
+    features.append(int(board._dict_rep[point] in others))
+  
+  for c in range(len(COORDS)):
+    for point2 in COORDS[c+1:]:
+      point = COORDS[c]
+      if point != point2:
+        # allied interaction
+        features.append(int(board._dict_rep[point] == color) * \
+          int(board._dict_rep[point2] == color))
+
+        # crossed interaction
+        features.append(int(board._dict_rep[point] == color) * \
+          int(board._dict_rep[point2] in others))
+        features.append(int(board._dict_rep[point2] == color) * \
+          int(board._dict_rep[point] in others))
+        
+        # enemy interaction
+        features.append(int(board._dict_rep[point] in others) * \
+          int(board._dict_rep[point2] in others))
+
+  features.append(len(board.pieces_of(color)))
+  features.append(board._win_state[color])
+  
+  for i in range(len(features)):
+    h0 += weights[i] * features[i]
+  return h0, features
+

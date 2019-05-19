@@ -64,7 +64,7 @@ class Learner:
 
     @staticmethod
     def write_weights(new_weights):
-        with open('weights.csv', 'a') as csvFile:
+        with open('weights1.csv', 'a') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(new_weights)
             csvFile.close()
