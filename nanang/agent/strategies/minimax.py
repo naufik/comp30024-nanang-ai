@@ -53,13 +53,35 @@ class Minimax3Tree(SearchTree):
 
     # evaluate a single "layer" of minimax search (a single layer here is
     # equivalent to three layers since we have three players!)
-    return self._eval_minimax_layer(board_next, next_player, thresh,
-      self._xdepth)
+    return self._eval_minimax_ab(board_next, next_player, depth=self._xdepth)
+
+  def _eval_minimax_ab(self, board: Board, player, alpha=-inf, beta=inf, depth=1):
+    if depth == 1:
+      return self.eval_node(board)
+    else:
+      if player == self._color:
+        value = -inf
+        for move in board.possible_moves(player):
+          value = max(value, self._eval_minimax_ab(board.possible_board(move),
+            Board.next_player(player), alpha, beta, depth-1))
+          alpha = max(alpha, value)
+          if alpha > beta:
+            break
+        return value
+      else:
+        value = inf
+        for move in board.possible_moves(player):
+          value = min(value, self._eval_minimax_ab(board.possible_board(move),
+            Board.next_player(player), alpha, beta, depth))
+          beta = min(beta, value)
+          if alpha > beta:
+            break
+        return value
+
 
   def _eval_minimax_layer(self, board, player, threshold=None, depth=1):
     # try to re implement iteratively instead of recursively to save time.
     # TODO: add memoization.
-
     if (player == self._color):
       moves = board.possible_moves(player)
       if depth <= 1:
