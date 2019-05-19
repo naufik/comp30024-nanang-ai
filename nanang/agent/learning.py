@@ -10,6 +10,15 @@ class Learner:
         self._weights = weights
 
     def update_weights(self, state_evals, current_state, features, colour):
+        """
+        Calculates new weights based on the TD-Leaf Lambda formula
+        :param state_evals: The evaluation functions for
+        :param current_state:
+        :param features:
+        :param colour:
+        :return:
+        """
+
         weights = self._weights
         new_weights = []
         eta = 0.1

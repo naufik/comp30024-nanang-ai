@@ -27,7 +27,7 @@ class Player:
     }
 
     #enable and disable learning
-    LEARN = 1
+    LEARN = 0
 
     @staticmethod
     def read_weights(color):
@@ -56,27 +56,29 @@ class Player:
         self._search_tree = Minimax3Tree(self._board, self._colour, 1, self._eval_func)
         self._states = {}
         self._features = {}
-        self._current_state = 0
-        self._past_boards = {}
-        self._past_boards[self._board] = 1
-        self._learner = Learner(self._weights)
+        if Player.LEARN:
+            self._current_state = 0
+            self._past_boards = {}
+            self._past_boards[self._board] = 1
+            self._learner = Learner(self._weights)
 
     def action(self):
         move, eval_value = self._search_tree.next_best()
         #returns the reward of the state
         if move:
-            #check if the next possible move is a weight update
-            next_board = self._board.possible_board(move)
-            endgame = self._learner.endgame(next_board, self._colour, self._current_state, self._past_boards)
-            if endgame == 1:
-                self._states[self._current_state] = endgame
-                self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
-                #do I need to do this part if it's being called from update anyways? Yes update_weight() for winner
-                self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
-            else:
-                self._states[self._current_state] = math.atan(eval_value) / math.pi
-                self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
-                self._current_state += 1
+            if Player.LEARN:
+                #check if the next possible move is a weight update
+                next_board = self._board.possible_board(move)
+                endgame = self._learner.endgame(next_board, self._colour, self._current_state, self._past_boards)
+                if endgame == 1:
+                    self._states[self._current_state] = endgame
+                    self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
+                    #do I need to do this part if it's being called from update anyways? Yes update_weight() for winner
+                    self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
+                else:
+                    self._states[self._current_state] = math.atan(eval_value) / math.pi
+                    self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
+                    self._current_state += 1
             return move.to_tuple()
         else:
             return ("PASS", None)
@@ -86,15 +88,15 @@ class Player:
         #update existing board
         move = Move.from_tuple(colour, action)
         self._board = self._board.possible_board(move)
+        if Player.LEARN:
+            if self._board not in self._past_boards.keys():
+                self._past_boards[self._board] = 1
+            else:
+                self._past_boards[self._board] += 1
 
-        if self._board not in self._past_boards.keys():
-            self._past_boards[self._board] = 1
-        else:
-            self._past_boards[self._board] += 1
-
-        #check if endgame, update weight for losers and draws
-        endgame = self._learner.endgame(self._board, self._colour, self._current_state, self._past_boards)
-        if endgame == -1 or endgame == 0:
-            self._states[self._current_state-1] = endgame
-            self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
+            #check if endgame, update weight for losers and draws
+            endgame = self._learner.endgame(self._board, self._colour, self._current_state, self._past_boards)
+            if endgame == -1 or endgame == 0:
+                self._states[self._current_state-1] = endgame
+                self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
         self._search_tree.set_root(self._board)
