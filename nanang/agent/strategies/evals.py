@@ -56,5 +56,5 @@ def eval_two(color, board, weights):
 
 rng = SystemRandom()
 def best_eval_ever(color, board: Board):
-  return rng.randint(-3000, 3000) + 50000 * board._win_state[color]
+  return rng.randint(-3000, 3000), [1]
 

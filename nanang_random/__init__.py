@@ -1,1 +1,1 @@
-from nanang.agent.player import Player
+from nanang_random.agent.player import Player

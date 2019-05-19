@@ -1,1 +1,1 @@
-from nanang.agent.player import Player
+from nanang_greedy.agent.player import Player
