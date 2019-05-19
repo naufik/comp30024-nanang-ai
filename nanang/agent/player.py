@@ -28,7 +28,7 @@ class Player:
     }
 
     #enable and disable learning
-    LEARN = True
+    LEARN = False
 
     @staticmethod
     def read_weights(color):
