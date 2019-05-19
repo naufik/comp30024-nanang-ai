@@ -1,8 +1,8 @@
 _bran = range(-3, +3+1)
 
 class Move:
-  DELTAS_MOVE = [ (0, 1), (0, -1), (1, -1), (-1, 1), (-1, 0), (1,0) ]
-  DELTAS_JUMP = [ (0, 2), (0, -2), (2, -2), (-2, 2), (2, 0), (-2, 0) ]
+  DELTAS_MOVE = { (0, 1), (0, -1), (1, -1), (-1, 1), (-1, 0), (1,0) }
+  DELTAS_JUMP = { (0, 2), (0, -2), (2, -2), (-2, 2), (2, 0), (-2, 0) }
 
   BOARD_RANGE = set([(q,r) for q in _bran for r in _bran if -q-r in _bran])
 
@@ -20,7 +20,8 @@ class Move:
 
   @staticmethod
   def _in_board(point):
-    return point in Move.BOARD_RANGE
+    q, r = point
+    return -3 <= q <= 3 and -3 <= r <= 3 and -3 <= -q-r <= 3
 
   def __init__(self, controller, source, dest):
     self.source = source

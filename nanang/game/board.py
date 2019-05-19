@@ -86,7 +86,7 @@ class Board:
       add0 = lambda t: Board.vecadd(pos, t)
       moves.extend([Move(controller, pos, x) for x in   \
         map(add0, 
-        Move.DELTAS_JUMP + Move.DELTAS_MOVE) if Move._in_board(x)])
+        Move.DELTAS_JUMP.union(Move.DELTAS_MOVE)) if Move._in_board(x)])
       
       if pos in Board.GOALS[controller]:
         # really hackish way to consider the exit moves, may change later.
