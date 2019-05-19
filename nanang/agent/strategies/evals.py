@@ -47,6 +47,13 @@ def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
 
   return h0, features
 
+WEIGHTS_PAR=[500.0004037109066,249.9992955679865,50000000.0,199.99923005056738,199.99923005056738]
+def eval_two(color, board, weights):
+  if len(board.pieces_of(color)) + board._win_state[color] > 3:
+    return eval_one(color, board, weights)
+  else:
+    return eval_one(color, board, WEIGHTS_PAR)
+
 rng = SystemRandom()
 def best_eval_ever(color, board: Board):
   return rng.randint(-3000, 3000) + 50000 * board._win_state[color]
