@@ -73,7 +73,6 @@ class Player:
                 if endgame == 1:
                     self._states[self._current_state] = endgame
                     self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
-                    #do I need to do this part if it's being called from update anyways? Yes update_weight() for winner
                     self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
                 else:
                     self._states[self._current_state] = math.atan(eval_value) / math.pi
