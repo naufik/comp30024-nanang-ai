@@ -99,7 +99,7 @@ class Board:
     return list(filter(self.valid_move, moves))
 
   def pieces_of(self, controller):
-    assert(controller in ["R", "G", "B"])
+    # assert(controller in ["R", "G", "B"])
     pieces = []
     for key in self._dict_rep:
       if self._dict_rep[key] == controller:

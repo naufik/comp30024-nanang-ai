@@ -2,6 +2,7 @@ from nanang.agent.searchtree import SearchTree
 from nanang.game.board import Board
 from nanang.game.move import Move
 from math import inf
+import cProfile
 
 class Minimax3Tree(SearchTree):
 
@@ -25,20 +26,11 @@ class Minimax3Tree(SearchTree):
     best_eval = -inf
     best_move = None
     
-    for edge in self._root.possible_moves(self._color):
-      self._mmthresh = best_eval
-      edge_eval = self.eval_edge(edge)
-      if edge_eval > best_eval:
-        best_move = edge
-        best_eval = edge_eval
+    
+    thing = self._eval_minimax_ab(self._root, self._color, depth=self._xdepth)
+    # cProfile.runctx("tt()", locals(), globals())
 
-    self._mmthresh = -inf
-    if best_move is None:
-      best_move = Move(self._color, None, None)
-    else:  
-      self.set_root(self._root.possible_board(best_move))
-      
-    return best_move, best_eval
+    return thing[1], thing[0]
     
   
   def eval_node(self, node):
@@ -56,27 +48,33 @@ class Minimax3Tree(SearchTree):
     return self._eval_minimax_ab(board_next, next_player, depth=self._xdepth)
 
   def _eval_minimax_ab(self, board: Board, player, alpha=-inf, beta=inf, depth=1):
-    if depth == 1:
-      return self.eval_node(board)
+    if depth == 0:
+      return self.eval_node(board), None 
     else:
       if player == self._color:
         value = -inf
+        best_move = None
         for move in board.possible_moves(player):
           value = max(value, self._eval_minimax_ab(board.possible_board(move),
-            Board.next_player(player), alpha, beta, depth-1))
-          alpha = max(alpha, value)
-          if alpha > beta:
+            Board.next_player(player), alpha, beta, depth-1)[0])
+          if value > alpha:
+            alpha = value
+            best_move = move
+          if alpha >= beta:
             break
-        return value
+        return value, best_move
       else:
         value = inf
+        best_cuck = None
         for move in board.possible_moves(player):
           value = min(value, self._eval_minimax_ab(board.possible_board(move),
-            Board.next_player(player), alpha, beta, depth))
-          beta = min(beta, value)
-          if alpha > beta:
+            Board.next_player(player), alpha, beta, depth-1)[0])
+          if value < beta:
+            beta = value
+            best_cuck = move
+          if alpha >= beta:
             break
-        return value
+        return value, best_cuck
 
 
   def _eval_minimax_layer(self, board, player, threshold=None, depth=1):
