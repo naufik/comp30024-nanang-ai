@@ -39,7 +39,7 @@ class Player:
         # self._search_tree = Minimax3Tree(self._board, self._colour, 1, 
             # evals.eval_one)
         
-        self._search_tree = MonteCarloSearchTree(self._board, self._colour, sim_count=300)
+        self._search_tree = MonteCarloSearchTree(self._board, self._colour, sim_count=100)
 
     rnd = Random()
     def board_evaluation(self, colour, board: Board):
@@ -89,7 +89,8 @@ class Player:
         # if selangkah_keseberang:
         #     return move.to_tuple()
         move: Move = None
-        cProfile.runctx("move = self._search_tree.next_best()", globals(), locals())
+        move = self._search_tree.next_best()
+        # cProfile.runctx("move = self._search_tree.next_best()", globals(), locals())
         if move:
             return move.to_tuple()
         else:
