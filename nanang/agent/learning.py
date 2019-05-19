@@ -12,11 +12,10 @@ class Learner:
     def update_weights(self, state_evals, current_state, features, colour):
         """
         Calculates new weights based on the TD-Leaf Lambda formula
-        :param state_evals: The evaluation functions for
-        :param current_state:
-        :param features:
-        :param colour:
-        :return:
+        :param state_evals: The reward value for all states for this particular game
+        :param current_state: The total number of states within this particular game
+        :param features: The feature values for all states for this paricular game
+        :param colour: The player for which this weight update calculation is relevant to
         """
 
         weights = self._weights
@@ -44,8 +43,7 @@ class Learner:
     def endgame(self, board, colour, current_state, past_boards):
         """
         Checks if the state is an endgame state (win/loss/draw)
-        :return: int indicating win/loss/draw with values ranging from [1,-1,0]
-        respectively
+        :return: Integer indicating win/loss/draw with values ranging from [1,-1,0] respectively
         """
         #check if player has won the game
         if board._win_state[colour] == Learner.NUM_PIECES_TO_WIN:
