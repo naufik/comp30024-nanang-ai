@@ -54,7 +54,7 @@ class Player:
         self._weights = Player.read_weights(self._colour)
         self._eval_func = lambda color, node: evals.eval_two(color, node, weights=self._weights)
         # using a simple Minimax3Tree, replace None with the heuristic function.
-        self._search_tree = Minimax3Tree(self._board, self._colour, 4, self._eval_func)
+        self._search_tree = Minimax3Tree(self._board, self._colour, 0, self._eval_func)
         # self._search_tree = MonteCarloSearchTree(self._board, self._colour,
             # 50)
         self._states = {}
