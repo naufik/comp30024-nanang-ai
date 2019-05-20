@@ -5,6 +5,7 @@ A collection of well defined evaluation functions.
 from nanang.game.board import Board
 from nanang.game.move import Move
 from random import SystemRandom
+from math import inf
 
 GOALS = {        
   "R": [(3, -3), (3, -2), (3, -1), (3, 0)],
@@ -75,6 +76,8 @@ def eval_one_b(color, board, weights):
 WEIGHTS_PAR=[500.0004037109066,249.9992955679865,5000.0,199.99923005056738,199.99923005056738]
 
 def eval_two(color, board, weights):
+  if board._win_state[color] == 4:
+    return inf, []
   if len(board.pieces_of(color)) + board._win_state[color] <= 4:
     return eval_one(color, board, weights)
   else:
