@@ -49,7 +49,7 @@ class Minimax3Tree(SearchTree):
 
   def _eval_minimax_ab(self, board: Board, player, alpha=-inf, beta=inf, depth=1):
     if depth == 0:
-      return self.eval_node(board), None 
+      return (self.eval_node(board), None) 
     else:
       if player == self._color:
         value = -inf
