@@ -66,7 +66,7 @@ def eval_one_b(color, board, weights):
 
   feature5 = sum([0] + [mn_dist(x, board) for x in others]) * 0.5
   features.append(feature5)
-
+  
   h0 = 0.0
   for i in range(len(features)):
     h0 += features[i] * weights[i]
@@ -76,12 +76,10 @@ def eval_one_b(color, board, weights):
 WEIGHTS_PAR=[500.0004037109066,249.9992955679865,5000.0,199.99923005056738,199.99923005056738]
 
 def eval_two(color, board, weights):
-  if board._win_state[color] == 4:
-    return inf, []
   if len(board.pieces_of(color)) + board._win_state[color] <= 4:
-    return eval_one(color, board, weights)
+    return eval_one(color, board, WEIGHTS_PAR)
   else:
-    return eval_one_b(color, board, weights)
+    return eval_one_b(color, board, WEIGHTS_PAR)
 
 rng = SystemRandom()
 def best_eval_ever(color, board: Board):
