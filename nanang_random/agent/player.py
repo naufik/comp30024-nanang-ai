@@ -28,24 +28,21 @@ class Player:
     }
 
     #enable and disable learning
-    LEARN = True
+    LEARN = False
 
     @staticmethod
     def read_weights(color):
-        try:
-            csv_file = open("weights1.csv")
-            lines = list(filter(bool, csv.reader(csv_file)))
-            lines.reverse()
-            lines = sorted(lines[:3])
-            if color == "B":
-                return list(map(float, lines[0][1:]))
-            elif color == "G":
-                return list(map(float, lines[1][1:]))
-            elif color == "R":
-                return list(map(float, lines[2][1:]))
-            assert (False)
-        except:
-            return [10.0 for i in range(2740)]
+        csv_file = open("weights.csv")
+        lines = list(filter(bool, csv.reader(csv_file)))
+        lines.reverse()
+        lines = sorted(lines[:3])
+        if color == "B":
+            return list(map(float, lines[0][1:]))
+        elif color == "G":
+            return list(map(float, lines[1][1:]))
+        elif color == "R":
+            return list(map(float, lines[2][1:]))
+        assert (False)
 
     def __init__(self, colour):
         assert(colour in {"red", "green", "blue"})
@@ -55,13 +52,9 @@ class Player:
         # Do extra initialization steps if it is a single_player game/
         self._goals = Player.GOALS[self._colour]
         self._weights = Player.read_weights(self._colour)
-        self._eval_func = lambda color, node: evals.linear_reg_eval(color, node, self._weights)
+        self._eval_func = lambda colour, node: evals.best_eval_ever(colour, node)
         # using a simple Minimax3Tree, replace None with the heuristic function.
-<<<<<<< HEAD
-        self._search_tree = Minimax3Tree(self._board, self._colour, 3, self._eval_func)
-=======
-        self._search_tree = Minimax3Tree(self._board, self._colour, 4, self._eval_func)
->>>>>>> rng-jesus
+        self._search_tree = Minimax3Tree(self._board, self._colour, 1, self._eval_func)
         # self._search_tree = MonteCarloSearchTree(self._board, self._colour,
             # 50)
         self._states = {}
