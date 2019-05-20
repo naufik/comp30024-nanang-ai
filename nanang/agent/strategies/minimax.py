@@ -2,6 +2,7 @@ from nanang.agent.searchtree import SearchTree
 from nanang.game.board import Board
 from nanang.game.move import Move
 from math import inf
+from sys import stderr
 import cProfile
 
 class Minimax3Tree(SearchTree):
@@ -29,7 +30,6 @@ class Minimax3Tree(SearchTree):
     
     thing = self._eval_minimax_ab(self._root, self._color, depth=self._xdepth)
     # cProfile.runctx("tt()", locals(), globals())
-
     return thing[1], thing[0]
     
   
@@ -49,7 +49,16 @@ class Minimax3Tree(SearchTree):
 
   def _eval_minimax_ab(self, board: Board, player, alpha=-inf, beta=inf, depth=1):
     if depth == 0:
-      evalue =  self.eval_node(board)
+      evalue = 0.0
+      if board.get_winner() == self._color:
+        evalue = inf
+      elif board.get_winner() is not None and board.get_winner() != self._color:
+        evalue = -inf
+      elif board.pieces_of(self._color) == 0:
+        evalue = -inf
+      else:
+        evalue = self.eval_node(board)
+
       return (evalue, None) 
     else:
       if player == self._color:
@@ -70,7 +79,7 @@ class Minimax3Tree(SearchTree):
         for move in board.possible_moves(player):
           value = min(value, self._eval_minimax_ab(board.possible_board(move),
             Board.next_player(player), alpha, beta, depth-1)[0])
-          if value < beta:
+          if value <= beta:
             beta = value
             best_cuck = move
           if alpha > beta:
