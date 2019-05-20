@@ -67,7 +67,7 @@ class Minimax3Tree(SearchTree):
         for move in board.possible_moves(player):
           value = max(value, self._eval_minimax_ab(board.possible_board(move),
             Board.next_player(player), alpha, beta, depth-1)[0])
-          if value > alpha:
+          if best_move is None or value > alpha:
             alpha = value
             best_move = move
           if alpha > beta:
@@ -79,7 +79,7 @@ class Minimax3Tree(SearchTree):
         for move in board.possible_moves(player):
           value = min(value, self._eval_minimax_ab(board.possible_board(move),
             Board.next_player(player), alpha, beta, depth-1)[0])
-          if value <= beta:
+          if best_cuck is None or value <= beta:
             beta = value
             best_cuck = move
           if alpha > beta:
