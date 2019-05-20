@@ -15,13 +15,22 @@ GOALS = {
 def _dist(x, y):
   return max(x[0]-y[0], x[1]-y[1], (-x[0]-x[1])-(-y[0]-y[1]))
 
-def mn_dist(color, board: Board):
+def mn_dist(color, board: Board, type):
   pieces = board.pieces_of(color)
-  return sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])
+  if type == "goals":
+    return sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])
+  elif type == "pieces":
+    if len(pieces)==0:
+      return 0
+    else:
+      #list empty cant pop
+      source_piece = pieces.pop()
+      tot_dist = []
+      for piece in pieces:
+        tot_dist.append(_dist(source_piece, piece))
+      return sum(tot_dist)
 
-
-
-def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
+def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200, 300]):
   features = []
   h0 = 0
   others = {"R", "G", "B"} - {color}
@@ -29,18 +38,20 @@ def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
   feature1 = len(board.pieces_of(color))
   features.append(feature1)
 
-
   feature2 = -sum(len(board.pieces_of(c)) for c in others)
   features.append(feature2)
 
   feature3 = board._win_state[color]
   features.append(feature3)
 
-  feature4 = -mn_dist(color, board)
+  feature4 = -mn_dist(color, board, "pieces")
   features.append(feature4)
 
-  feature5 = sum([0] + [mn_dist(x, board) for x in others])
+  feature5 = sum([0] + [mn_dist(x, board, "goals") for x in others])
   features.append(feature5)
+
+  feature6 = -mn_dist(color, board, "pieces")
+  features.append(feature6)
 
   for i in range(len(features)):
     h0 += weights[i] * features[i]
