@@ -47,19 +47,45 @@ def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
 
   return h0, features
 
-WEIGHTS_PAR=[500.0004037109066,249.9992955679865,50000000.0,199.99923005056738,199.99923005056738]
+def eval_one_b(color, board, weights):
+  others = {"R", "G", "B"} - {color}
+  features = []
+  feature1 = len(board.pieces_of(color)) * 0
+  features.append(feature1)
+
+
+  feature2 = -sum(len(board.pieces_of(c)) for c in others) * 0
+  features.append(feature2)
+
+  feature3 = board._win_state[color]
+  features.append(feature3)
+
+  feature4 = -mn_dist(color, board) * 3
+  features.append(feature4)
+
+  feature5 = sum([0] + [mn_dist(x, board) for x in others]) * 0
+  features.append(feature5)
+
+  h0 = 0.0
+  for i in range(len(features)):
+    h0 += features[i] * weights[i]
+
+  return h0, features
+
+WEIGHTS_PAR=[500.0004037109066,249.9992955679865,5000.0,199.99923005056738,199.99923005056738]
+
 def eval_two(color, board, weights):
-  if len(board.pieces_of(color)) + board._win_state[color] > 2:
+  if len(board.pieces_of(color)) + board._win_state[color] > 4:
     return eval_one(color, board, weights)
   else:
-    return eval_one(color, board, WEIGHTS_PAR)
+    return eval_one_b(color, board, weights)
 
 rng = SystemRandom()
 def best_eval_ever(color, board: Board):
   return rng.randint(-3000, 3000), [1]
 
 
-DEFAULT_WEIGHTS = [10 for i in range(10)]
+DEFAULT_WEIGHTS = [rng.randint(-100,100) for i in range(2750)]
 def linear_reg_eval(color, board: Board, weights=DEFAULT_WEIGHTS):
   features = []
   COORDS = sorted(board._dict_rep.keys())
