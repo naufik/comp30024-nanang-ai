@@ -20,7 +20,7 @@ class Learner:
 
         weights = self._weights
         new_weights = []
-        eta = 0.1
+        eta = 0.2
         lambDUH = 0.7
         new_weights.append(colour)
         for weight in weights:

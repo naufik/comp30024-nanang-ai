@@ -26,7 +26,7 @@ def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
   h0 = 0
   others = {"R", "G", "B"} - {color}
 
-  feature1 = len(board.pieces_of(color)) + board._win_state[color]
+  feature1 = len(board.pieces_of(color))
   features.append(feature1)
 
 
@@ -50,7 +50,7 @@ def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
 def eval_one_b(color, board, weights):
   others = {"R", "G", "B"} - {color}
   features = []
-  feature1 = len(board.pieces_of(color)) * 0.75 + board._win_state[color]
+  feature1 = len(board.pieces_of(color)) * 0.75
   features.append(feature1)
 
 
@@ -83,6 +83,42 @@ def eval_two(color, board, weights):
 rng = SystemRandom()
 def best_eval_ever(color, board: Board):
   return rng.randint(-3000, 3000), [1]
+
+def eval_three(color, board, weights):
+  others = {"R", "G", "B"} - {color}
+  features = []
+
+  pc = len(board.pieces_of(color))
+  ws = board._win_state[color]
+
+  adv_coef = int(pc + ws < 5)
+  # feature 1,2: pieces
+  features.append(pc)
+  # with coefficient
+  features.append(pc * adv_coef)
+
+  mnd = mn_dist(color,board)
+  
+  # feature 3,4: distance
+  features.append(mnd)
+  
+  # with coefficient
+  features.append(mnd * adv_coef)
+
+  endist = sum([0] + [mn_dist(x, board) for x in others])
+  # features 5,6 enemy distance
+  features.append(endist)
+  features.append(endist * adv_coef)
+
+  # feature 7 the winning state
+  features.append(ws)
+  enough = int(pc + board._win_state[color] < 4)
+  
+  # this is the broken feature.
+  features.append(enough * ws)
+
+  h0 = sum([w * f for w, f in zip(weights, features)] + [0])
+  return h0, features
 
 
 DEFAULT_WEIGHTS = [rng.randint(-100,100) for i in range(2750)]
