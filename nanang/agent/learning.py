@@ -27,7 +27,6 @@ class Learner:
             w = weight
             adjustment = 0
             for i in range(current_state-1):
-                # TODO: find gradient
                 gradient = features[i][weights.index(w)]
                 telescope = 0
                 for m in range(i, current_state-1):
@@ -53,9 +52,10 @@ class Learner:
         for colour in others:
             if board._win_state[colour] == Learner.NUM_PIECES_TO_WIN:
                 return Learner.ENDGAME_STATES["LOSS"]
-        #check for draws
+        #check for draw (maximum number of states has been reached)
         if current_state == Learner.MAX_STATES:
             return Learner.ENDGAME_STATES["DRAW"]
+        #check for draw (a state has occured four times)
         for occurrences in past_boards.values():
             if occurrences == 4:
                 return Learner.ENDGAME_STATES["DRAW"]
