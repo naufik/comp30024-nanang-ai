@@ -112,11 +112,13 @@ def eval_three(color, board, weights):
 
   # feature 7 the winning state
   features.append(ws)
-  enough = int(pc + board._win_state[color] < 4)
+  not_enough = int(pc + board._win_state[color] < 4)
   
   # this is the broken feature.
-  features.append(enough * ws)
+  features.append(not_enough * ws)
 
+  # thing
+  features.append(mnd * not_enough)
   h0 = sum([w * f for w, f in zip(weights, features)] + [0])
   return h0, features
 
