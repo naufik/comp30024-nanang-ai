@@ -66,8 +66,6 @@ class Minimax3Tree(SearchTree):
       evalue = 0.0
       if board.get_winner() == self._color:
         evalue = inf
-      elif board.pieces_of(self._color) == 0:
-        evalue = -inf
       else:
         evalue = self.eval_node(board)
 

@@ -117,7 +117,7 @@ def eval_three(color, board, weights):
   not_enough = int(pc + board._win_state[color] < 4)
   
   # this is the broken feature.
-  # features.append(not_enough * ws)
+  features.append(not_enough * ws)
 
   # thing
   # features.append(mnd * not_enough)
