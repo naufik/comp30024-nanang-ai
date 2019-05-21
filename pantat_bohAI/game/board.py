@@ -86,7 +86,8 @@ class Board:
       if pos in Board.GOALS[controller]:
         # really hackish way to consider the exit moves, may change later.
         moves.append(Move(controller, pos, None))
-        
+    
+    for pos in pieces_pos:
       add0 = lambda t: Board.vecadd(pos, t)
       moves.extend([Move(controller, pos, x) for x in   \
         map(add0, 

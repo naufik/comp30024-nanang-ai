@@ -168,3 +168,44 @@ def linear_reg_eval(colour, board: Board, weights=DEFAULT_WEIGHTS):
     h0 += weights[i] * features[i]
   return h0, features
 
+
+def interaction_eval(color, board, weights):
+  others = {"R", "G", "B"} - {color}
+  features = []
+
+  pc = len(board.pieces_of(color))
+  ws = board._win_state[color]
+
+  adv_coef = int(pc + ws >= 5)
+  # feature 1,2: pieces
+  features.append(pc)
+  # with coefficient
+  features.append(pc * adv_coef)
+
+  mnd = mn_dist(color,board)
+  
+  # feature 3,4: distance
+  features.append(mnd)
+  
+  # with coefficient
+  features.append(mnd * adv_coef)
+
+  endist = sum([0] + [mn_dist(x, board) for x in others])
+  # features 5,6 enemy distance
+  features.append(endist)
+  features.append(endist * adv_coef)
+
+  # feature 7 the winning state
+  features.append(ws)
+  not_enough = int(pc + board._win_state[color] < 4)
+  
+  # this is the broken feature.
+  # features.append(not_enough * ws)
+
+  # thing
+  # features.append(mnd * not_enough)
+
+  ## problem: how the fuck do we get back into offense if we need to?
+  h0 = sum([w * f for w, f in zip(weights, features)] + [0])
+  return h0, features
+

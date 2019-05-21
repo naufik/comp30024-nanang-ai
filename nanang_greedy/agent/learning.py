@@ -1,4 +1,5 @@
 import csv
+from math import pi
 
 class Learner:
 
@@ -20,15 +21,16 @@ class Learner:
 
         weights = self._weights
         new_weights = []
-        eta = 0.1
+        eta = 0.2
         lambDUH = 0.7
         new_weights.append(colour)
-        for weight in weights:
-            w = weight
+        for j in range(len(weights)):
+            w = weights[j]
             adjustment = 0
             for i in range(current_state-1):
                 # TODO: find gradient
-                gradient = features[i][weights.index(w)]
+                eval_value = sum([a * b for a, b in zip(features[i], weights)])
+                gradient = 2 * features[i][j] / (pi * (1 + (eval_value)**2))
                 telescope = 0
                 for m in range(i, current_state-1):
                     exponent = m - i
