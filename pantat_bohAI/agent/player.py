@@ -60,7 +60,7 @@ class Player:
         self._eval_func = lambda color, node: evals.meta_eval(color, node, self._weights)
 
         self._search_tree = Minimax3Tree(self._board, self._colour, 4, self._eval_func)
-        
+
         self._states = {}
         self._features = {}
         if Player.LEARN:
