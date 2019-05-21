@@ -4,15 +4,18 @@ from pantat_bohAI.game.move import Move
 from math import sqrt, log
 from random import SystemRandom
 
-# Thinking of storing the tree as (parent, node, Qscore, NScore, successors)
-# Author's note: I JUST REALIZED A MONTE CARLO SEARCH TREE IS LITERALLY
-# DR STRANGE!!! You look at a large enough number of possible futures and
-# see how many times you would win...
 
 class MonteCarloNode:
+  """
+  Defines a single Monte-Carlo search tree node
+  """
   exp_factor = 1.41259
 
   def __init__(self, parent, board, move_from=None):
+    """
+    Initializes a monte-carlo search tree node that stores the scores for a
+    specific board
+    """
     self.parent = parent
     self.board = board
     self.successors = []
@@ -22,6 +25,10 @@ class MonteCarloNode:
     self._transition = move_from
   
   def explore(self):
+    """
+    Performs an 'exploration' on this node, that is: perform one random move
+    that we have never selected before.
+    """
     if self._memoized_moves is None:
       self._memoized_moves = self.board.possible_moves(self.board.current_turn)
     
@@ -40,12 +47,21 @@ class MonteCarloNode:
     
   
   def propagate_up(self, winner):
+    """
+    On completion of a single simulation. Update the scores of the current node
+    as well as all of its parents.
+    """
     self.nscore += 1
     self.qscore += int(self.board.current_turn == winner)
     if self.parent is not None:
       self.parent.propagate_up(winner)
 
   def node_eval(self):
+    """
+    Evaluates a node the score depends on the UCT scoring method that balances
+    between exploration of new nodes as well as exploitation of information
+    found in already explored nodes.
+    """
     if (self.nscore == 0) or (self.parent is None):
       return 0
     return (self.qscore / self.nscore) + \
@@ -103,6 +119,9 @@ class MonteCarloSearchTree(SearchTree):
     return None
 
   def next_best(self):
+    """
+    Finds the next best move according to Monte-Carlo simulation.
+    """
     self.monte_carlo_fullsearch()
     if len(self._mct_root.successors) == 0:
       return Move(self.color, None, None)
@@ -112,6 +131,9 @@ class MonteCarloSearchTree(SearchTree):
 
 
   def monte_carlo_fullsearch(self):
+    """
+    Searches for the best move by performing the Monte-Carlo search routine.
+    """
     for _ in range(self._sim):
       # Selection and Expansion
       expand = self.monte_carlo_select(self._mct_root)
@@ -123,6 +145,10 @@ class MonteCarloSearchTree(SearchTree):
       new_node.propagate_up(win)
 
   def monte_carlo_select(self, node: MonteCarloNode):
+    """
+    Selects a single node as the best candidate for the best move according to
+    the current known scores.
+    """
     return_node = node
 
     if (node._memoized_moves is None) or (len(node._memoized_moves) > 0):
@@ -137,6 +163,11 @@ class MonteCarloSearchTree(SearchTree):
     return return_node
   
   def monte_carlo_simulate(self, node):
+    """
+    Simulates a single (up to) 256-turn games. The information obtained by
+    simulating this game will be used to update the information of scores in
+    the tree.
+    """
     board: Board = node.board
     turn_counter = self._master_turn_count
     player_begin = board.current_turn
