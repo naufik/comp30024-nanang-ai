@@ -57,7 +57,7 @@ class Player:
         
         self._goals = Player.GOALS[self._colour]
         self._weights = Player.read_weights(self._colour)
-        self._eval_func = lambda color, node: evals.meta_eval(color, node, self._weights)
+        self._eval_func = lambda color, node: evals.meta_eval(color, node)
 
         self._search_tree = Minimax3Tree(self._board, self._colour, 4, self._eval_func)
 
