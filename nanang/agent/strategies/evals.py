@@ -77,9 +77,9 @@ WEIGHTS_PAR=[500.0004037109066,249.9992955679865,5000.0,199.99923005056738,199.9
 
 def eval_two(color, board, weights):
   if len(board.pieces_of(color)) + board._win_state[color] <= 4:
-    return eval_one(color, board, WEIGHTS_PAR)
+    return eval_one(color, board, weights)
   else:
-    return eval_one_b(color, board, WEIGHTS_PAR)
+    return eval_one_b(color, board, weights)
 
 rng = SystemRandom()
 def best_eval_ever(color, board: Board):
