@@ -1,4 +1,4 @@
-from nanang.agent.searchtree import SearchTree
+from pantat_bohAI.agent.searchtree import SearchTree
 
 class RegTree(SearchTree):
   """

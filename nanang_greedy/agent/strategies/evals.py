@@ -2,8 +2,8 @@
 A collection of well defined evaluation functions.
 """
 
-from nanang.game.board import Board
-from nanang.game.move import Move
+from nanang_greedy.game.board import Board
+from pantat_bohAI.game.move import Move
 from random import SystemRandom
 
 GOALS = {        
