@@ -83,7 +83,7 @@ class Player:
                     self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                     self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
                 else:
-                    self._states[self._current_state] = math.atan(eval_value) / math.pi
+                    self._states[self._current_state] = 2 * math.atan(eval_value) / math.pi
                     self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                     self._current_state += 1
             return move.to_tuple()
