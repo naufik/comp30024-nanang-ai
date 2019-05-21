@@ -24,19 +24,27 @@ class Minimax3Tree(SearchTree):
     self._eval = eval_f
 
   def next_best(self):
-    best_eval = -inf
-    best_move = None
-    
-    
+    """
+    Finds the next best move to use. Returns a two tuple (move, move_eval)
+    """
+
     thing = self._eval_minimax_ab(self._root, self._color, depth=self._xdepth)
     # cProfile.runctx("tt()", locals(), globals())
     return thing[1], thing[0]
     
   
   def eval_node(self, node):
+    """
+    Evaluates the value of a single board / node.
+    """
     return self._eval(self._color, node)[0]
 
   def eval_edge(self, edge):
+    """
+    Deprecated.
+    Evaluates a single or single possible moves, not recommended for use in
+    minimax as this does not perform pruning effectively.
+    """    
     board_next = self._root.possible_board(edge)
 
     #gives the next player whose turn it is to play, given the current player's turn
@@ -48,6 +56,16 @@ class Minimax3Tree(SearchTree):
     return self._eval_minimax_ab(board_next, next_player, depth=self._xdepth)
 
   def _eval_minimax_ab(self, board: Board, player, alpha=-inf, beta=inf, depth=1):
+    """
+    Finds the best move based on the minimax tree.
+    This returns the tuple (eval_score, best_move).
+
+    Uses alpha-beta pruning in order to eliminate many states from the possible
+    search space. The code here is a modified implementation based on the
+    psuedocode found in https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning.
+    
+    It is modified to allow three-player adversarial search.
+    """
     if depth == 0:
       evalue = 0.0
       if board.get_winner() == self._color:
