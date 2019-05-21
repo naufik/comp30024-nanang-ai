@@ -2,14 +2,14 @@ import math
 import time
 from queue import PriorityQueue
 import heapq as heap
-from nanang.game.board import Board
-from nanang.game.move import Move
-from nanang.agent.strategies.minimax import Minimax3Tree
-from nanang.agent.learning import Learner
-from nanang.agent.strategies.mcstree import MonteCarloSearchTree, MonteCarloNode
-from nanang.agent.searchtree import SearchTree
+from pantat_bohAI.game.board import Board
+from pantat_bohAI.game.move import Move
+from pantat_bohAI.agent.strategies.minimax import Minimax3Tree
+from pantat_bohAI.agent.learning import Learner
+from pantat_bohAI.agent.strategies.mcstree import MonteCarloSearchTree, MonteCarloNode
+from pantat_bohAI.agent.searchtree import SearchTree
 from random import SystemRandom
-import nanang.agent.strategies.evals as evals
+import pantat_bohAI.agent.strategies.evals as evals
 import csv
 import cProfile
 
@@ -54,14 +54,18 @@ class Player:
         self._colour = colour[0].upper()
         self._board = Board(Board.initialize_board())
         self._n_pieces = len(self._board.pieces_of(self._colour))
-        # Do extra initialization steps if it is a single_player game/
+        
         self._goals = Player.GOALS[self._colour]
         self._weights = Player.read_weights(self._colour)
+<<<<<<< HEAD:nanang/agent/player.py
         self._eval_func = lambda color, node: evals.eval_three(color, node, self._weights)
         # using a simple Minimax3Tree, replace None with the heuristic function.
+=======
+        self._eval_func = lambda color, node: evals.meta_eval(color, node, self._weights)
+
+>>>>>>> comments-refactor:pantat_bohAI/agent/player.py
         self._search_tree = Minimax3Tree(self._board, self._colour, 4, self._eval_func)
-        # self._search_tree = MonteCarloSearchTree(self._board, self._colour,
-            # 50)
+
         self._states = {}
         self._features = {}
         if Player.LEARN:
@@ -75,15 +79,22 @@ class Player:
         #returns the reward of the state
         if move:
             if Player.LEARN:
-                #check if the next possible move is a weight update
+                #check if the next possible move results the player winnning the game
                 next_board = self._board.possible_board(move)
                 endgame = self._learner.endgame(next_board, self._colour, self._current_state, self._past_boards)
                 if endgame == 1:
+                    #store the current state's reward value as the winning endgame utility value, 1
                     self._states[self._current_state] = endgame
                     self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
+                    #update the weights
                     self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
                 else:
+<<<<<<< HEAD:nanang/agent/player.py
                     self._states[self._current_state] = 2 * math.atan(eval_value) / math.pi
+=======
+                    #store reward value as the current state's evaluation value mapped to arctan
+                    self._states[self._current_state] = math.atan(eval_value) / math.pi
+>>>>>>> comments-refactor:pantat_bohAI/agent/player.py
                     self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                     self._current_state += 1
             return move.to_tuple()
@@ -96,14 +107,16 @@ class Player:
         move = Move.from_tuple(colour, action)
         self._board = self._board.possible_board(move)
         if Player.LEARN:
+            #track the number of times a particular state for a board has occured
             if self._board not in self._past_boards.keys():
                 self._past_boards[self._board] = 1
             else:
                 self._past_boards[self._board] += 1
 
-            #check if endgame, update weight for losers and draws
+            #check if the current state is an endgame state, that being a draw (0) or a loss (-1)
             endgame = self._learner.endgame(self._board, self._colour, self._current_state, self._past_boards)
             if endgame == -1 or endgame == 0:
                 self._states[self._current_state-1] = endgame
+                #update the weights
                 self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
         self._search_tree.set_root(self._board)

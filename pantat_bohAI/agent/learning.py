@@ -1,4 +1,5 @@
 import csv
+from math import pi
 
 class Learner:
 
@@ -23,12 +24,13 @@ class Learner:
         eta = 0.2
         lambDUH = 0.7
         new_weights.append(colour)
-        for weight in weights:
-            w = weight
+        for j in range(len(weights)):
+            w = weights[j]
             adjustment = 0
             for i in range(current_state-1):
                 # TODO: find gradient
-                gradient = features[i][weights.index(w)]
+                eval_value = sum([a * b for a, b in zip(features[i], weights)])
+                gradient = 2 * features[i][j] / (pi * (1 + (eval_value)**2))
                 telescope = 0
                 for m in range(i, current_state-1):
                     exponent = m - i
@@ -53,9 +55,10 @@ class Learner:
         for colour in others:
             if board._win_state[colour] == Learner.NUM_PIECES_TO_WIN:
                 return Learner.ENDGAME_STATES["LOSS"]
-        #check for draws
+        #check for draw (maximum number of states has been reached)
         if current_state == Learner.MAX_STATES:
             return Learner.ENDGAME_STATES["DRAW"]
+        #check for draw (a state has occured four times)
         for occurrences in past_boards.values():
             if occurrences == 4:
                 return Learner.ENDGAME_STATES["DRAW"]

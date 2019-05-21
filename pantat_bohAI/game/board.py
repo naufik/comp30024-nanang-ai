@@ -8,7 +8,7 @@ A piece has a 'controller' and a 'position', the 'controller' is the team that
 controls a piece, which is a selection of 'R', 'G', 'B', 'X'. ('X' refers to the
 blocking pieces.)
 """
-from nanang.game.move import Move
+from pantat_bohAI.game.move import Move
 
 class Board:
   GOALS = {        
@@ -86,7 +86,8 @@ class Board:
       if pos in Board.GOALS[controller]:
         # really hackish way to consider the exit moves, may change later.
         moves.append(Move(controller, pos, None))
-        
+    
+    for pos in pieces_pos:
       add0 = lambda t: Board.vecadd(pos, t)
       moves.extend([Move(controller, pos, x) for x in   \
         map(add0, 

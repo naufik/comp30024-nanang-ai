@@ -2,13 +2,13 @@ import math
 import time
 from queue import PriorityQueue
 import heapq as heap
-from nanang.game.board import Board
-from nanang.game.move import Move
-from nanang.agent.strategies.minimax import Minimax3Tree
-from nanang.agent.learning import Learner
-from nanang.agent.strategies.mcstree import MonteCarloSearchTree, MonteCarloNode
-from nanang.agent.searchtree import SearchTree
-import nanang.agent.strategies.evals as evals
+from pantat_bohAI.game.board import Board
+from pantat_bohAI.game.move import Move
+from pantat_bohAI.agent.strategies.minimax import Minimax3Tree
+from pantat_bohAI.agent.learning import Learner
+from pantat_bohAI.agent.strategies.mcstree import MonteCarloSearchTree, MonteCarloNode
+from pantat_bohAI.agent.searchtree import SearchTree
+import pantat_bohAI.agent.strategies.evals as evals
 import csv
 import cProfile
 

@@ -1,6 +1,6 @@
-from nanang.agent.searchtree import SearchTree
-from nanang.game.board import Board
-from nanang.game.move import Move
+from pantat_bohAI.agent.searchtree import SearchTree
+from pantat_bohAI.game.board import Board
+from pantat_bohAI.game.move import Move
 from math import sqrt, log
 from random import SystemRandom
 
