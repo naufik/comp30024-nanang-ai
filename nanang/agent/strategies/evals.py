@@ -18,7 +18,8 @@ def _dist(x, y):
 
 def mn_dist(color, board: Board):
   pieces = board.pieces_of(color)
-  return sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])
+  n = len(pieces)
+  return 0 if n == 0 else sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])/n
 
 
 
