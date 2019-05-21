@@ -57,13 +57,8 @@ class Player:
         
         self._goals = Player.GOALS[self._colour]
         self._weights = Player.read_weights(self._colour)
-<<<<<<< HEAD:nanang/agent/player.py
         self._eval_func = lambda color, node: evals.eval_three(color, node, self._weights)
         # using a simple Minimax3Tree, replace None with the heuristic function.
-=======
-        self._eval_func = lambda color, node: evals.meta_eval(color, node, self._weights)
-
->>>>>>> comments-refactor:pantat_bohAI/agent/player.py
         self._search_tree = Minimax3Tree(self._board, self._colour, 4, self._eval_func)
 
         self._states = {}
@@ -89,12 +84,7 @@ class Player:
                     #update the weights
                     self._learner.update_weights(self._states, self._current_state, self._features, self._colour)
                 else:
-<<<<<<< HEAD:nanang/agent/player.py
                     self._states[self._current_state] = 2 * math.atan(eval_value) / math.pi
-=======
-                    #store reward value as the current state's evaluation value mapped to arctan
-                    self._states[self._current_state] = math.atan(eval_value) / math.pi
->>>>>>> comments-refactor:pantat_bohAI/agent/player.py
                     self._features[self._current_state] = self._eval_func(self._colour, next_board)[1]
                     self._current_state += 1
             return move.to_tuple()

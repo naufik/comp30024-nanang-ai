@@ -52,11 +52,6 @@ class Minimax3Tree(SearchTree):
       evalue = 0.0
       if board.get_winner() == self._color:
         evalue = inf
-<<<<<<< HEAD:nanang/agent/strategies/minimax.py
-      elif board.get_winner() is None and board.pieces_of(self._color) == 0:
-        evalue = -inf
-=======
->>>>>>> comments-refactor:pantat_bohAI/agent/strategies/minimax.py
       else:
         evalue = self.eval_node(board)
       return (evalue, None) 
