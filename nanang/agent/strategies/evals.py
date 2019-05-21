@@ -118,7 +118,7 @@ def eval_three(color, board, weights):
   features.append(not_enough * ws)
 
   # thing
-  features.append(mnd * not_enough)
+  # features.append(mnd * not_enough)
   h0 = sum([w * f for w, f in zip(weights, features)] + [0])
   return h0, features
 
