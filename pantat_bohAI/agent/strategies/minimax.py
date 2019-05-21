@@ -54,7 +54,6 @@ class Minimax3Tree(SearchTree):
         evalue = inf
       else:
         evalue = self.eval_node(board)
-
       return (evalue, None) 
     else:
       if player == self._color:
