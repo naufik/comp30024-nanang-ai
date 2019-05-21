@@ -87,7 +87,12 @@ class Board:
         # really hackish way to consider the exit moves, may change later.
         moves.append(Move(controller, pos, None))
         
+<<<<<<< HEAD
+=======
+    for pos in pieces_pos:
+>>>>>>> rng-jesus
       add0 = lambda t: Board.vecadd(pos, t)
+      
       moves.extend([Move(controller, pos, x) for x in   \
         map(add0, 
         Move.DELTAS_JUMP.union(Move.DELTAS_MOVE)) if Move._in_board(x)])

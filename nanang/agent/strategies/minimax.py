@@ -63,6 +63,7 @@ class Minimax3Tree(SearchTree):
     """
 
     if depth == 0:
+<<<<<<< HEAD
       evalue = 0.0
       if board.get_winner() == self._color:
         evalue = inf
@@ -70,6 +71,9 @@ class Minimax3Tree(SearchTree):
         evalue = self.eval_node(board)
 
       return (evalue, None) 
+=======
+      return (inf if board._win_state[self._color] >= 4 else self.eval_node(board)), None
+>>>>>>> rng-jesus
     else:
       if player == self._color:
         value = -inf

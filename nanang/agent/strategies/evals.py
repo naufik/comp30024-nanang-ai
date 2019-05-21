@@ -5,6 +5,7 @@ A collection of well defined evaluation functions.
 from nanang.game.board import Board
 from nanang.game.move import Move
 from random import SystemRandom
+from math import inf
 
 GOALS = {        
   "R": [(3, -3), (3, -2), (3, -1), (3, 0)],
@@ -65,7 +66,7 @@ def eval_one_b(color, board, weights):
 
   feature5 = sum([0] + [mn_dist(x, board) for x in others])
   features.append(feature5)
-
+  
   h0 = 0.0
   for i in range(len(features)):
     h0 += features[i] * weights[i]
