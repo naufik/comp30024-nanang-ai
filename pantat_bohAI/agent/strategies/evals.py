@@ -41,8 +41,8 @@ def main_eval(colour, board: Board, weights=[500, 250, 50000000, 200, 200]):
   h0 = 0
   others = {"R", "G", "B"} - {colour}
 
-  #the number of ally pieces that are within the board and that have exited the board
-  feature1 = len(board.pieces_of(colour)) + board._win_state[colour]
+  #the number of ally pieces that are within the board
+  feature1 = len(board.pieces_of(colour))
   features.append(feature1)
 
   #the number of enemy pieces within the board
@@ -78,12 +78,12 @@ def win_eval(colour, board, weights):
   features = []
   h0 = 0.0
 
-  #the number of ally pieces that are within the board and that have exited the board
-  feature1 = len(board.pieces_of(colour)) * 0.75 + board._win_state[colour]
+  #the number of ally pieces that are within the board
+  feature1 = 4 + (len(board.pieces_of(colour))-4) * 0.2
   features.append(feature1)
 
   #the number of enemy pieces within the board
-  feature2 = -sum(len(board.pieces_of(c)) for c in others)
+  feature2 = -sum(len(board.pieces_of(c)) for c in others) * 0.5
   features.append(feature2)
 
   #the number of ally pieces that have exited the game
@@ -95,7 +95,7 @@ def win_eval(colour, board, weights):
   features.append(feature4)
 
   #the sum of minimum distances between all enemy pieces to their respective nearest goals
-  feature5 = sum([0] + [mn_dist(x, board) for x in others])
+  feature5 = sum([0] + [mn_dist(x, board) for x in others]) * 0.5
   features.append(feature5)
 
   for i in range(len(features)):

@@ -29,7 +29,6 @@ def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
   feature1 = len(board.pieces_of(color))
   features.append(feature1)
 
-
   feature2 = -sum(len(board.pieces_of(c)) for c in others)
   features.append(feature2)
 
