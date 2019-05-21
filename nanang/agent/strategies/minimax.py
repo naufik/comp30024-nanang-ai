@@ -49,7 +49,7 @@ class Minimax3Tree(SearchTree):
 
   def _eval_minimax_ab(self, board: Board, player, alpha=-inf, beta=inf, depth=1):
     if depth == 0:
-      return (inf if board._win_state[self._color] >= 4 else self.eval_node(board)), None
+      return self.eval_node(board), None 
     else:
       if player == self._color:
         value = -inf
@@ -60,7 +60,7 @@ class Minimax3Tree(SearchTree):
           if value > alpha:
             alpha = value
             best_move = move
-          if alpha > beta:
+          if alpha >= beta:
             break
         return value, best_move
       else:
@@ -72,7 +72,7 @@ class Minimax3Tree(SearchTree):
           if value < beta:
             beta = value
             best_cuck = move
-          if alpha > beta:
+          if alpha >= beta:
             break
         return value, best_cuck
         

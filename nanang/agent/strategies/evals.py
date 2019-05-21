@@ -5,7 +5,6 @@ A collection of well defined evaluation functions.
 from nanang.game.board import Board
 from nanang.game.move import Move
 from random import SystemRandom
-from math import inf
 
 GOALS = {        
   "R": [(3, -3), (3, -2), (3, -1), (3, 0)],
@@ -16,13 +15,22 @@ GOALS = {
 def _dist(x, y):
   return max(x[0]-y[0], x[1]-y[1], (-x[0]-x[1])-(-y[0]-y[1]))
 
-def mn_dist(color, board: Board):
+def mn_dist(color, board: Board, type):
   pieces = board.pieces_of(color)
-  return sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])
+  if type == "goals":
+    return sum(sorted([_dist(piece, goal) for goal in GOALS[color] for piece in pieces])[:4])
+  elif type == "pieces":
+    if len(pieces)==0:
+      return 0
+    else:
+      #list empty cant pop
+      source_piece = pieces.pop()
+      tot_dist = []
+      for piece in pieces:
+        tot_dist.append(_dist(source_piece, piece))
+      return sum(tot_dist)
 
-
-
-def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
+def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200, 300]):
   features = []
   h0 = 0
   others = {"R", "G", "B"} - {color}
@@ -30,18 +38,20 @@ def eval_one(color, board: Board, weights=[500, 250, 50000000, 200, 200]):
   feature1 = len(board.pieces_of(color))
   features.append(feature1)
 
-
   feature2 = -sum(len(board.pieces_of(c)) for c in others)
   features.append(feature2)
 
   feature3 = board._win_state[color]
   features.append(feature3)
 
-  feature4 = -mn_dist(color, board)
+  feature4 = -mn_dist(color, board, "pieces")
   features.append(feature4)
 
-  feature5 = sum([0] + [mn_dist(x, board) for x in others])
+  feature5 = sum([0] + [mn_dist(x, board, "goals") for x in others])
   features.append(feature5)
+
+  feature6 = -mn_dist(color, board, "pieces")
+  features.append(feature6)
 
   for i in range(len(features)):
     h0 += weights[i] * features[i]
@@ -66,7 +76,7 @@ def eval_one_b(color, board, weights):
 
   feature5 = sum([0] + [mn_dist(x, board) for x in others]) * 0.5
   features.append(feature5)
-  
+
   h0 = 0.0
   for i in range(len(features)):
     h0 += features[i] * weights[i]
@@ -77,9 +87,9 @@ WEIGHTS_PAR=[500.0004037109066,249.9992955679865,5000.0,199.99923005056738,199.9
 
 def eval_two(color, board, weights):
   if len(board.pieces_of(color)) + board._win_state[color] <= 4:
-    return eval_one(color, board, WEIGHTS_PAR)
+    return eval_one(color, board, weights)
   else:
-    return eval_one_b(color, board, WEIGHTS_PAR)
+    return eval_one_b(color, board, weights)
 
 rng = SystemRandom()
 def best_eval_ever(color, board: Board):

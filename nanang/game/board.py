@@ -83,15 +83,14 @@ class Board:
 
     moves = []
     for pos in pieces_pos:
-      if pos in Board.GOALS[controller]:
-        # really hackish way to consider the exit moves, may change later.
-        moves.append(Move(controller, pos, None))
-
-    for pos in pieces_pos:
       add0 = lambda t: Board.vecadd(pos, t)
       moves.extend([Move(controller, pos, x) for x in   \
         map(add0, 
         Move.DELTAS_JUMP.union(Move.DELTAS_MOVE)) if Move._in_board(x)])
+      
+      if pos in Board.GOALS[controller]:
+        # really hackish way to consider the exit moves, may change later.
+        moves.append(Move(controller, pos, None))
 
     if moves == []:
       # add the pass move if there are no possible moves.
