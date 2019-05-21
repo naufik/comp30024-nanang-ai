@@ -50,10 +50,10 @@ class Minimax3Tree(SearchTree):
   def _eval_minimax_ab(self, board: Board, player, alpha=-inf, beta=inf, depth=1):
     if depth == 0:
       evalue = 0.0
-      if board.get_winner() == self._color:
-        evalue = inf
-      else:
-        evalue = self.eval_node(board)
+      # if board.get_winner() == self._color:
+      #   # evalue = inf
+      # else:
+      evalue = self.eval_node(board)
 
       return (evalue, None) 
     else:
