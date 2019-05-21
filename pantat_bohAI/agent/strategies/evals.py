@@ -176,7 +176,7 @@ def interaction_eval(color, board, weights):
   pc = len(board.pieces_of(color))
   ws = board._win_state[color]
 
-  adv_coef = int(pc + ws >= 5)
+  adv_coef = int(pc + ws >= 4)
   # feature 1,2: pieces
   features.append(pc)
   # with coefficient
@@ -200,7 +200,7 @@ def interaction_eval(color, board, weights):
   not_enough = int(pc + board._win_state[color] < 4)
   
   # this is the broken feature.
-  # features.append(not_enough * ws)
+  features.append(not_enough * ws)
 
   # thing
   # features.append(mnd * not_enough)
