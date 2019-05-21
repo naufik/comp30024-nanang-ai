@@ -24,7 +24,7 @@ class Minimax3Tree(SearchTree):
     self._eval = eval_f
     self._random = None
 
-    if kwargs["random"] == True:
+    if "random" in kwargs and kwargs["random"] == True:
       self._random = {}
       self._random["chance"] = kwargs["chance"]
       self._random["threshold"] = kwargs["threshold"]
@@ -66,8 +66,6 @@ class Minimax3Tree(SearchTree):
       evalue = 0.0
       if board.get_winner() == self._color:
         evalue = inf
-      elif board.pieces_of(self._color) == 0:
-        evalue = -inf
       else:
         evalue = self.eval_node(board)
 
