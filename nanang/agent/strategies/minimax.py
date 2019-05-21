@@ -7,7 +7,7 @@ import cProfile
 
 class Minimax3Tree(SearchTree):
 
-  def __init__(self, root, color, expansion_depth, eval_f):
+  def __init__(self, root, color, expansion_depth, eval_f, **kwargs):
     """
     Initializes a minimax search tree.
     :param root: the root of the tree.
@@ -22,6 +22,12 @@ class Minimax3Tree(SearchTree):
     self._color = color
     self._xdepth = expansion_depth
     self._eval = eval_f
+    self._random = None
+
+    if kwargs["random"] == True:
+      self._random = {}
+      self._random["chance"] = kwargs["chance"]
+      self._random["threshold"] = kwargs["threshold"]
 
   def next_best(self):
     best_eval = -inf
@@ -41,13 +47,21 @@ class Minimax3Tree(SearchTree):
 
     #gives the next player whose turn it is to play, given the current player's turn
     next_player = Board.next_player(self._color)
-    thresh = self._mmthresh if self._mmthresh > -inf else None
 
     # evaluate a single "layer" of minimax search (a single layer here is
     # equivalent to three layers since we have three players!)
     return self._eval_minimax_ab(board_next, next_player, depth=self._xdepth)
 
   def _eval_minimax_ab(self, board: Board, player, alpha=-inf, beta=inf, depth=1):
+    """
+    Performs a minimax adversarial search, algorithm implementation is based on
+    psuedocode in https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning.
+    :param board: the root of the search
+    :param player: color of the maximizing player, either "R", "G", "B".
+    :param depth: the depth of the search, depth 0 will only give evaluation
+    function of the root.
+    """
+
     if depth == 0:
       evalue = 0.0
       if board.get_winner() == self._color:
