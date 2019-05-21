@@ -54,13 +54,12 @@ class Player:
         self._colour = colour[0].upper()
         self._board = Board(Board.initialize_board())
         self._n_pieces = len(self._board.pieces_of(self._colour))
-        # Do extra initialization steps if it is a single_player game/
+        
         self._goals = Player.GOALS[self._colour]
         self._weights = Player.read_weights(self._colour)
         self._eval_func = lambda color, node: evals.meta_eval(color, node, self._weights)
-        # using a simple Minimax3Tree, replace None with the heuristic function.
+
         self._search_tree = Minimax3Tree(self._board, self._colour, 4, self._eval_func)
-        # self._search_tree = MonteCarloSearchTree(self._board, self._colour,
             # 50)
         self._states = {}
         self._features = {}
