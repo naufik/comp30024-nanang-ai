@@ -28,7 +28,7 @@ def mn_dist(colour, board: Board):
 
 
 
-def main_eval(colour, board: Board, weights=[500, 250, 50000000, 200, 200]):
+def main_eval(colour, board: Board, weights):
   """
   the main evaluation function to be used byb the agent
   :param colour: the player's colour for which the evaluation function is being calculated for
@@ -105,7 +105,7 @@ def win_eval(colour, board, weights):
 
 WEIGHTS_PAR=[500.0004037109066,249.9992955679865,5000.0,199.99923005056738,199.99923005056738]
 
-def meta_eval(colour, board, weights):
+def meta_eval(colour, board, weights=[314.1959307331428,679.4325188197438,49996.83599818127,634.788276469027,634.788276469027]):
   """
   function handles dynamic evaluation, that is it manages the evaluation function for which the search tree will use
   to evaluate a state
